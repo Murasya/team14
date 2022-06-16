@@ -18,11 +18,11 @@ class WeatherResponse{
 Future<http.Response>getWeather({required String appId, required String coordinates, String output = 'json', String date = '', int past = 0, int interval = 10}) async{
   // check output type arg
   if (!['xml', 'json'].contains(output)){
-    return Future<http.Response>.value(null);
+    throw Exception('output type should be xml or json');
   }
   // check interval arg
   if (![10, 5].contains(interval)){
-    return Future<http.Response>.value(null);
+    throw Exception('interval should be 10 or 5');
   }
 
   // url
