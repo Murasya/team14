@@ -3,26 +3,59 @@ import 'package:http/http.dart' as http;
 
 // weather response class
 // https://developer.yahoo.co.jp/webapi/map/openlocalplatform/v1/weather.html
-class Weather {}
+class Weather {
+  // observation or forecast
+  final String type;
 
-class WeatherResponse {
-  final String id;
-  final String name;
-  final String geometryType;
-  final String geometryCoordinates;
+  // YYYYMMDDHHMI format
+  final String date;
 
-  // List<Weather> weatherList;
+  // [mm/h]
+  final double rainfall;
 
-  WeatherResponse(
-    this.id,
-    this.name,
-    this.geometryType,
-    this.geometryCoordinates,
-  );
+  const Weather({
+    required this.type,
+    required this.date,
+    required this.rainfall,
+  });
 }
 
+class WeatherResponse {
+  final List<Weather> weatherList;
+
+  WeatherResponse(
+    this.weatherList,
+  );
+
+  // toString
+  @override
+  String toString(){
+    var str = '';
+    for (var weather in weatherList) {
+      str += 'Type:${weather.type}, Date:${weather.date}, Rainfall:${weather.rainfall}\n';
+    }
+    return str;
+  }
+
+  // from response
+  factory WeatherResponse.fromJson(Map<String, dynamic> json) {
+    List<Weather> weatherList = [];
+    List<dynamic> listJson = json['Feature'][0]['Property']['WeatherList']['Weather'];
+    for(var weatherJson in listJson){
+      var weather = Weather(
+        type: weatherJson['Type'],
+        date: weatherJson['Date'],
+        rainfall: weatherJson['Rainfall'],
+      );
+      weatherList.add(weather);
+    }
+    return WeatherResponse(weatherList);
+  }
+}
+
+
 // get weather
-Future<http.Response> getWeather({
+Future<WeatherResponse> getWeather({
   required String appId,
   required String coordinates,
   String output = 'json',
@@ -41,13 +74,17 @@ Future<http.Response> getWeather({
 
   // url
   var url = Uri.parse(
-      'https://map.yahooapis.jp/weather/V1/place?coordinates=$coordinates&appid=$appId');
+      'https://map.yahooapis.jp/weather/V1/place?coordinates=$coordinates&appid=$appId&output=$output&interval=$interval');
   // get response
   var response = await http.get(url);
+  // convert response to List of weather
+  // print(convert.jsonDecode(response.body)['Feature'][0]['Property']['WeatherList']['Weather'][0]);
+  var weatherResponse = WeatherResponse.fromJson(convert.jsonDecode(response.body));
 
   if (response.statusCode == 200) {
-    return Future<http.Response>.value(response);
+    return Future<WeatherResponse>.value(weatherResponse);
   } else {
-    throw Exception('Failed to get weather');
+    throw Exception(
+        'Failed to get weather, response code : ${response.statusCode}');
   }
 }
