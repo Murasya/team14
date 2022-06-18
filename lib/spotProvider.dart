@@ -9,7 +9,11 @@ const String tableName = 'spot';
 class SpotProvider {
   late Database db;
 
-  Future open() async {
+  SpotProvider() {
+    _open();
+  }
+
+  Future _open() async {
     final dbDirectory = await getApplicationSupportDirectory();
     final dbFilePath = dbDirectory.path;
     db = await openDatabase(join(dbFilePath, dbName), version: 1,
