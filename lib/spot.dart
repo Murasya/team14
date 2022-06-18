@@ -1,10 +1,10 @@
 const String columnId = '_id';
 const String columnTitle = 'title';
 const String columnTemperature = 'temperature';
-const String columnGpsPosition = 'gpsPosition';
+const String columnGpsPosition = 'gps_position';
 const String columnMemo = 'memo';
-const String columnCreatedAt = 'createdAt';
-const String columnUpdatedAt = 'updatedAt';
+const String columnCreatedAt = 'created_at';
+const String columnUpdatedAt = 'updated_at';
 
 class Spot {
   int id;
