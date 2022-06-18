@@ -1,7 +1,8 @@
 const String columnId = '_id';
 const String columnTitle = 'title';
 const String columnTemperature = 'temperature';
-const String columnGpsPosition = 'gps_position';
+const String columnGpsLatitude = 'gps_latitude';
+const String columnGpsLongitude = 'gps_longitude';
 const String columnMemo = 'memo';
 const String columnCreatedAt = 'created_at';
 const String columnUpdatedAt = 'updated_at';
@@ -10,7 +11,8 @@ class Spot {
   int id;
   String title;
   num temperature;
-  String gpsPosition;
+  num gpsLatitude;
+  num gpsLongitude;
   String memo;
   DateTime createdAt;
   DateTime updatedAt;
@@ -19,7 +21,8 @@ class Spot {
     this.id,
     this.title,
     this.temperature,
-    this.gpsPosition,
+    this.gpsLatitude,
+    this.gpsLongitude,
     this.memo,
     this.createdAt,
     this.updatedAt,
@@ -30,7 +33,8 @@ class Spot {
       columnId: id,
       columnTitle: title,
       columnTemperature: temperature,
-      columnGpsPosition: gpsPosition,
+      columnGpsLatitude: gpsLatitude,
+      columnGpsLongitude: gpsLongitude,
       columnMemo: memo,
       columnCreatedAt: createdAt.toIso8601String(),
       columnUpdatedAt: updatedAt.toIso8601String(),
@@ -42,7 +46,8 @@ class Spot {
       : id = map[columnId] as int,
         title = map[columnTitle] as String,
         temperature = map[columnTemperature] as num,
-        gpsPosition = map[columnGpsPosition] as String,
+        gpsLatitude = map[columnGpsLatitude] as num,
+        gpsLongitude = map[columnGpsLongitude] as num,
         memo = map[columnMemo] as String,
         createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
         updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
@@ -50,6 +55,6 @@ class Spot {
   // For Debug
   void dumpAllColumns() {
     print(
-        '$id: $title, $temperature, $gpsPosition, $memo, $createdAt, $updatedAt');
+        '$id: $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt');
   }
 }
