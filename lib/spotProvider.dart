@@ -49,4 +49,13 @@ create table $tableName (
     }
     return Future<List<Spot>>.value(spots);
   }
+
+  Future<int> update(Spot spot) async {
+    return await db.update(tableName, spot.toMap(),
+        where: '$columnId = ?', whereArgs: [spot.id]);
+  }
+
+  Future<int> delete(int id) async {
+    return await db.delete(tableName, where: '$columnId = ?', whereArgs: [id]);
+  }
 }
