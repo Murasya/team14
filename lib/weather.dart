@@ -78,7 +78,6 @@ Future<WeatherResponse> getWeather({
   // get response
   var response = await http.get(url);
   // convert response to List of weather
-  // print(convert.jsonDecode(response.body)['Feature'][0]['Property']['WeatherList']['Weather'][0]);
   var weatherResponse = WeatherResponse.fromJson(convert.jsonDecode(response.body));
 
   if (response.statusCode == 200) {
