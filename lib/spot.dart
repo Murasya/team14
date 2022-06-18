@@ -50,9 +50,10 @@ class Spot {
         createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
         updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
 
+  @override
+  String toString() =>
+      '($id: $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt)';
+
   // For Debug
-  void dumpAllColumns() {
-    print(
-        '$id: $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt');
-  }
+  void dumpAllColumns() => print(this.toString());
 }
