@@ -8,7 +8,7 @@ const String columnCreatedAt = 'created_at';
 const String columnUpdatedAt = 'updated_at';
 
 class Spot {
-  int id;
+  int? id;
   String title;
   num temperature;
   num gpsLatitude;
@@ -18,7 +18,6 @@ class Spot {
   DateTime updatedAt;
 
   Spot(
-    this.id,
     this.title,
     this.temperature,
     this.gpsLatitude,
@@ -30,7 +29,6 @@ class Spot {
 
   Map<String, Object?> toMap() {
     var map = <String, Object>{
-      columnId: id,
       columnTitle: title,
       columnTemperature: temperature,
       columnGpsLatitude: gpsLatitude,
