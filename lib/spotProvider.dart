@@ -58,4 +58,6 @@ create table $tableName (
   Future<int> delete(int id) async {
     return await db.delete(tableName, where: '$columnId = ?', whereArgs: [id]);
   }
+
+  Future close() async => db.close();
 }
