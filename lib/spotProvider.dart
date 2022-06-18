@@ -37,22 +37,12 @@ create table $tableName (
   }
 
   Future<List<Spot>> selectAll() async {
-    List<Map<String, Object?>> maps = await db.query(tableName, columns: [
-      columnId,
-      columnTitle,
-      columnTemperature,
-      columnGpsLatitude,
-      columnGpsLongitude,
-      columnMemo,
-      columnCreatedAt,
-      columnUpdatedAt,
-    ]);
-    List<Spot> spots = <Spot>[];
-    for (var map in maps) {
-      Spot spot = Spot.fromMap(map);
-      spots.add(spot);
-    }
-    return Future<List<Spot>>.value(spots);
+    final maps = await db.query(
+      tableName,
+      orderBy: '$columnId DESC',
+    );
+    if (maps.isEmpty) return [];
+    return maps.map((map) => Spot.fromMap(map)).toList();
   }
 
   Future<int> update(Spot spot) async {
