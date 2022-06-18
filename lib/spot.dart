@@ -12,8 +12,8 @@ class Spot {
   num temperature;
   String gpsPosition;
   String memo;
-  String createdAt;
-  String updatedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
 
   Spot(
     this.id,
@@ -32,8 +32,8 @@ class Spot {
       columnTemperature: temperature,
       columnGpsPosition: gpsPosition,
       columnMemo: memo,
-      columnCreatedAt: createdAt,
-      columnUpdatedAt: updatedAt,
+      columnCreatedAt: createdAt.toIso8601String(),
+      columnUpdatedAt: updatedAt.toIso8601String(),
     };
     return map;
   }
@@ -44,8 +44,8 @@ class Spot {
         temperature = map[columnTemperature] as num,
         gpsPosition = map[columnGpsPosition] as String,
         memo = map[columnMemo] as String,
-        createdAt = map[columnCreatedAt] as String,
-        updatedAt = map[columnUpdatedAt] as String;
+        createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
+        updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
 
   // For Debug
   void dumpAllColumns() {
