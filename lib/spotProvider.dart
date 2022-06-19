@@ -61,11 +61,7 @@ create table $tableName (
     var file = File(filePath);
     String fileContents =
         '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemo, $columnCreatedAt, $columnUpdatedAt\n';
-    await selectAll().then((spots) {
-      for (var spot in spots) {
-        fileContents += '${spot.toString()}\n';
-      }
-    });
+    await selectAll().then((spots) => fileContents += spots.join('\n'));
     await file.writeAsString(fileContents);
     Share.shareFiles([filePath]);
   }
