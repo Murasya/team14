@@ -60,7 +60,7 @@ create table $tableName (
     final filePath = '${directory.path}/$fileName';
     var file = File(filePath);
     String fileContents =
-        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemo, $columnCreatedAt, $columnUpdatedAt,\n';
+        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemo, $columnCreatedAt, $columnUpdatedAt\n';
     await selectAll().then((spots) {
       for (var spot in spots) {
         fileContents += '${spot.toString()}\n';
