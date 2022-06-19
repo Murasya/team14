@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'spot.dart';
 
 const String dbName = 'memo-app.db';
@@ -50,6 +53,21 @@ create table $tableName (
   Future<int> delete(int id) async {
     final db = await _open();
     return await db.delete(tableName, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future shareAsCsvFromDB({String fileName = 'latest_db.csv'}) async {
+    final directory = await getTemporaryDirectory();
+    final filePath = '${directory.path}/$fileName';
+    var file = File(filePath);
+    String fileContents =
+        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemo, $columnCreatedAt, $columnUpdatedAt,\n';
+    await selectAll().then((spots) {
+      for (var spot in spots) {
+        fileContents += '${spot.toString()}\n';
+      }
+    });
+    await file.writeAsString(fileContents);
+    Share.shareFiles([filePath]);
   }
 
   Future close() async {
