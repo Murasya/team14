@@ -52,7 +52,7 @@ class Spot {
 
   @override
   String toString() =>
-      '($id: $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt)';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
