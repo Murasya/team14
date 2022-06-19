@@ -7,16 +7,10 @@ const String dbName = 'memo-app.db';
 const String tableName = 'spot';
 
 class SpotProvider {
-  late Database db;
-
-  SpotProvider() {
-    _open();
-  }
-
-  Future _open() async {
+  Future<Database> _open() async {
     final dbDirectory = await getApplicationSupportDirectory();
     final dbFilePath = dbDirectory.path;
-    db = await openDatabase(join(dbFilePath, dbName), version: 1,
+    return await openDatabase(join(dbFilePath, dbName), version: 1,
         onCreate: (Database db, int version) async {
       await db.execute('''
 create table $tableName (
@@ -33,10 +27,12 @@ create table $tableName (
   }
 
   Future<int> insert(Spot spot) async {
+    final db = await _open();
     return await db.insert(tableName, spot.toMap());
   }
 
   Future<List<Spot>> selectAll() async {
+    final db = await _open();
     final maps = await db.query(
       tableName,
       orderBy: '$columnId DESC',
@@ -46,13 +42,18 @@ create table $tableName (
   }
 
   Future<int> update(Spot spot) async {
+    final db = await _open();
     return await db.update(tableName, spot.toMap(),
         where: '$columnId = ?', whereArgs: [spot.id]);
   }
 
   Future<int> delete(int id) async {
+    final db = await _open();
     return await db.delete(tableName, where: '$columnId = ?', whereArgs: [id]);
   }
 
-  Future close() async => db.close();
+  Future close() async {
+    final db = await _open();
+    db.close();
+  }
 }
