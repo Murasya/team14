@@ -17,8 +17,8 @@ create table $memoTemplateTableName (
   $memoTemplateColumnId integer primary key autoincrement,
   $memoTemplateColumnName text unique not null,
   $memoTemplateColumnTextBox integer not null,
-  $memoTemplateColumnRadioButtonLists text not null,
-  $memoTemplateColumnPullDownLists text not null)
+  $memoTemplateColumnRadioButtonList text not null,
+  $memoTemplateColumnPullDownList text not null)
 ''');
     });
   }
