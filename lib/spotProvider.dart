@@ -13,14 +13,14 @@ class SpotProvider {
 
   Future<int> insert(Spot spot) async {
     final db = await _open();
-    return await db.insert(tableName, spot.toMap());
+    return await db.insert(spotTableName, spot.toMap());
   }
 
   Future<List<Spot>> selectAll() async {
     final db = await _open();
     final maps = await db.query(
-      tableName,
-      orderBy: '$columnId DESC',
+      spotTableName,
+      orderBy: '$spotColumnId DESC',
     );
     if (maps.isEmpty) return [];
     return maps.map((map) => Spot.fromMap(map)).toList();
@@ -28,13 +28,14 @@ class SpotProvider {
 
   Future<int> update(Spot spot) async {
     final db = await _open();
-    return await db.update(tableName, spot.toMap(),
-        where: '$columnId = ?', whereArgs: [spot.id]);
+    return await db.update(spotTableName, spot.toMap(),
+        where: '$spotColumnId = ?', whereArgs: [spot.id]);
   }
 
   Future<int> delete(int id) async {
     final db = await _open();
-    return await db.delete(tableName, where: '$columnId = ?', whereArgs: [id]);
+    return await db
+        .delete(spotTableName, where: '$spotColumnId = ?', whereArgs: [id]);
   }
 
   Future shareAsCsvFromDB({String fileName = 'latest_db.csv'}) async {
@@ -42,7 +43,7 @@ class SpotProvider {
     final filePath = '${directory.path}/$fileName';
     var file = File(filePath);
     String fileContents =
-        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemoTemplateId, $columnTextBox, $columnRadioButtonList, $columnPullDown, $columnCreatedAt, $columnUpdatedAt\n';
+        '$spotColumnId, $spotColumnTitle, $spotColumnTemperature, $spotColumnGpsLatitude, $spotColumnGpsLongitude, $spotColumnMemoTemplateId, $spotColumnTextBox, $spotColumnRadioButtonList, $spotColumnPullDown, $spotColumnCreatedAt, $spotColumnUpdatedAt\n';
     await selectAll().then((spots) => fileContents += spots.join('\n'));
     await file.writeAsString(fileContents);
     Share.shareFiles([filePath]);

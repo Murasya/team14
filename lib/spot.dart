@@ -28,32 +28,34 @@ class Spot {
 
   Map<String, Object?> toMap() {
     var map = <String, Object>{
-      columnTitle: title,
-      columnTemperature: temperature,
-      columnGpsLatitude: gpsLatitude,
-      columnGpsLongitude: gpsLongitude,
-      columnMemoTemplateId: memoTemplateId,
-      columnTextBox: textBox,
-      columnRadioButtonList: radioButtonList.join('\n'),
-      columnPullDown: pullDown,
-      columnCreatedAt: createdAt.toIso8601String(),
-      columnUpdatedAt: updatedAt.toIso8601String(),
+      spotColumnTitle: title,
+      spotColumnTemperature: temperature,
+      spotColumnGpsLatitude: gpsLatitude,
+      spotColumnGpsLongitude: gpsLongitude,
+      spotColumnMemoTemplateId: memoTemplateId,
+      spotColumnTextBox: textBox,
+      spotColumnRadioButtonList: radioButtonList.join('\n'),
+      spotColumnPullDown: pullDown,
+      spotColumnCreatedAt: createdAt.toIso8601String(),
+      spotColumnUpdatedAt: updatedAt.toIso8601String(),
     };
     return map;
   }
 
   Spot.fromMap(Map<String, Object?> map)
-      : id = map[columnId] as int,
-        title = map[columnTitle] as String,
-        temperature = map[columnTemperature] as num,
-        gpsLatitude = map[columnGpsLatitude] as num,
-        gpsLongitude = map[columnGpsLongitude] as num,
-        memoTemplateId = map[columnMemoTemplateId] as int,
-        textBox = map[columnTextBox] as String,
-        radioButtonList = map[columnRadioButtonList].toString().split('\n'),
-        pullDown = map[columnPullDown] as int,
-        createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
-        updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
+      : id = map[spotColumnId] as int,
+        title = map[spotColumnTitle] as String,
+        temperature = map[spotColumnTemperature] as num,
+        gpsLatitude = map[spotColumnGpsLatitude] as num,
+        gpsLongitude = map[spotColumnGpsLongitude] as num,
+        memoTemplateId = map[spotColumnMemoTemplateId] as int,
+        textBox = map[spotColumnTextBox] as String,
+        radioButtonList = map[spotColumnRadioButtonList].toString().split('\n'),
+        pullDown = map[spotColumnPullDown] as int,
+        createdAt =
+            DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
+        updatedAt =
+            DateTime.parse(map[spotColumnUpdatedAt] as String).toLocal();
 
   @override
   String toString() =>

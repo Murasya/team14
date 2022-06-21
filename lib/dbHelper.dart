@@ -13,18 +13,18 @@ const String memoTemplateColumnRadioButtonList = 'radio_button_list';
 const String memoTemplateColumnPullDownList = 'pull_down_list';
 
 // spot table
-const String tableName = 'spot';
-const String columnId = '_id';
-const String columnTitle = 'title';
-const String columnTemperature = 'temperature';
-const String columnGpsLatitude = 'gps_latitude';
-const String columnGpsLongitude = 'gps_longitude';
-const String columnMemoTemplateId = 'memo_template_id';
-const String columnTextBox = 'text_box';
-const String columnRadioButtonList = 'radio_button_list';
-const String columnPullDown = 'pull_down';
-const String columnCreatedAt = 'created_at';
-const String columnUpdatedAt = 'updated_at';
+const String spotTableName = 'spot';
+const String spotColumnId = '_id';
+const String spotColumnTitle = 'title';
+const String spotColumnTemperature = 'temperature';
+const String spotColumnGpsLatitude = 'gps_latitude';
+const String spotColumnGpsLongitude = 'gps_longitude';
+const String spotColumnMemoTemplateId = 'memo_template_id';
+const String spotColumnTextBox = 'text_box';
+const String spotColumnRadioButtonList = 'radio_button_list';
+const String spotColumnPullDown = 'pull_down';
+const String spotColumnCreatedAt = 'created_at';
+const String spotColumnUpdatedAt = 'updated_at';
 
 Future<Database> openHelper() async {
   final dbDirectory = await getApplicationSupportDirectory();
@@ -42,18 +42,18 @@ create table $memoTemplateTableName (
   $memoTemplateColumnPullDownList text not null)
 ''');
     await db.execute('''
-create table $tableName (
-  $columnId integer primary key autoincrement,
-  $columnTitle text not null,
-  $columnTemperature real not null,
-  $columnGpsLatitude real not null,
-  $columnGpsLongitude real not null,
-  $columnMemoTemplateId integer references $memoTemplateTableName($memoTemplateColumnId) on delete restrict,
-  $columnTextBox text not null,
-  $columnRadioButtonList text not null,
-  $columnPullDown integer not null,
-  $columnCreatedAt text not null,
-  $columnUpdatedAt text not null)
+create table $spotTableName (
+  $spotColumnId integer primary key autoincrement,
+  $spotColumnTitle text not null,
+  $spotColumnTemperature real not null,
+  $spotColumnGpsLatitude real not null,
+  $spotColumnGpsLongitude real not null,
+  $spotColumnMemoTemplateId integer references $memoTemplateTableName($memoTemplateColumnId) on delete restrict,
+  $spotColumnTextBox text not null,
+  $spotColumnRadioButtonList text not null,
+  $spotColumnPullDown integer not null,
+  $spotColumnCreatedAt text not null,
+  $spotColumnUpdatedAt text not null)
 ''');
   });
 }
