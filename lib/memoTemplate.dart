@@ -1,8 +1,4 @@
-const String memoTemplateColumnId = '_id';
-const String memoTemplateColumnName = 'name';
-const String memoTemplateColumnTextBox = 'text_box';
-const String memoTemplateColumnRadioButtonList = 'radio_button_list';
-const String memoTemplateColumnPullDownList = 'pull_down_list';
+import 'dbHelper.dart';
 
 class MemoTemplate {
   int? id;

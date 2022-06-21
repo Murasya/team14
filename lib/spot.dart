@@ -1,14 +1,4 @@
-const String columnId = '_id';
-const String columnTitle = 'title';
-const String columnTemperature = 'temperature';
-const String columnGpsLatitude = 'gps_latitude';
-const String columnGpsLongitude = 'gps_longitude';
-const String columnMemoTemplateId = 'memo_template_id';
-const String columnTextBox = 'text_box';
-const String columnRadioButtonList = 'radio_button_list';
-const String columnPullDown = 'pull_down';
-const String columnCreatedAt = 'created_at';
-const String columnUpdatedAt = 'updated_at';
+import 'dbHelper.dart';
 
 class Spot {
   int? id;
