@@ -4,9 +4,9 @@ class MemoTemplate {
   int? id;
   String name;
   bool textBox;
-  List<String> multipleSelectList; // Each element is an item.
-  List<String>
-      singleSelectList; // The first element is the title, and the rest are items.
+  Set<String> multipleSelectList; // Each element is a unique item.
+  Set<String>
+      singleSelectList; // The first element is the title, and the rest are unique items.
 
   MemoTemplate(
     this.name,
@@ -29,10 +29,14 @@ class MemoTemplate {
       : id = map[memoTemplateColumnId] as int,
         name = map[memoTemplateColumnName] as String,
         textBox = map[memoTemplateColumnTextBox] == 1,
-        multipleSelectList =
-            map[memoTemplateColumnMultipleSelectList].toString().split('\n'),
-        singleSelectList =
-            map[memoTemplateColumnSingleSelectList].toString().split('\n');
+        multipleSelectList = map[memoTemplateColumnMultipleSelectList]
+            .toString()
+            .split('\n')
+            .toSet(),
+        singleSelectList = map[memoTemplateColumnSingleSelectList]
+            .toString()
+            .split('\n')
+            .toSet();
 
   @override
   String toString() =>

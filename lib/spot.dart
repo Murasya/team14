@@ -8,7 +8,7 @@ class Spot {
   num gpsLongitude;
   int memoTemplateId;
   String textBox;
-  List<String> multipleSelectList; // List of items that are ON
+  List<bool> multipleSelectList; // List of items on/off
   int singleSelect; // Index of applicable items
   DateTime createdAt;
   DateTime updatedAt;
@@ -34,7 +34,10 @@ class Spot {
       spotColumnGpsLongitude: gpsLongitude,
       spotColumnMemoTemplateId: memoTemplateId,
       spotColumnTextBox: textBox,
-      spotColumnMultipleSelectList: multipleSelectList.join('\n'),
+      spotColumnMultipleSelectList: multipleSelectList
+          .map((value) => value == true ? 1 : 0)
+          .toList()
+          .join('\n'),
       spotColumnSingleSelect: singleSelect,
       spotColumnCreatedAt: createdAt.toIso8601String(),
       spotColumnUpdatedAt: updatedAt.toIso8601String(),
@@ -50,8 +53,11 @@ class Spot {
         gpsLongitude = map[spotColumnGpsLongitude] as num,
         memoTemplateId = map[spotColumnMemoTemplateId] as int,
         textBox = map[spotColumnTextBox] as String,
-        multipleSelectList =
-            map[spotColumnMultipleSelectList].toString().split('\n'),
+        multipleSelectList = map[spotColumnMultipleSelectList]
+            .toString()
+            .split('\n')
+            .map((value) => value == '1' ? true : false)
+            .toList(),
         singleSelect = map[spotColumnSingleSelect] as int,
         createdAt =
             DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
