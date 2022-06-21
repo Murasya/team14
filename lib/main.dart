@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:team14/create_template_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(const CreateTemplateDebug());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
