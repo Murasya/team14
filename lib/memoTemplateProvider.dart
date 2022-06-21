@@ -33,6 +33,9 @@ class MemoTemplateProvider {
     return maps.map((map) => MemoTemplate.fromMap(map)).toList();
   }
 
+  // CAUTION: If a field is updated when it has child records,
+  // the consistency will be broken.
+  // Therefore, the following is used when there are no child records.
   Future<int> update(MemoTemplate memoTemplate) async {
     final db = await _open();
     return await db.update(memoTemplateTableName, memoTemplate.toMap(),

@@ -4,8 +4,9 @@ class MemoTemplate {
   int? id;
   String name;
   bool textBox;
-  List<String> radioButtonList;
-  List<String> pullDownList;
+  List<String> radioButtonList; // Each element is an item.
+  List<String>
+      pullDownList; // The first element is the title, and the rest are items.
 
   MemoTemplate(
     this.name,

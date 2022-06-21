@@ -8,8 +8,8 @@ class Spot {
   num gpsLongitude;
   int memoTemplateId;
   String textBox;
-  List<String> radioButtonList;
-  int pullDown;
+  List<String> radioButtonList; // List of items that are ON
+  int pullDown; // Index of applicable items
   DateTime createdAt;
   DateTime updatedAt;
 
