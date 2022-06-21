@@ -59,7 +59,7 @@ class Spot {
 
   @override
   String toString() =>
-      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, $radioButtonList, $pullDown, $createdAt, $updatedAt';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${radioButtonList.join('/')}, $pullDown, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
