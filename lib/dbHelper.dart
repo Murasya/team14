@@ -9,8 +9,8 @@ const String memoTemplateTableName = 'memo_template';
 const String memoTemplateColumnId = '_id';
 const String memoTemplateColumnName = 'name';
 const String memoTemplateColumnTextBox = 'text_box';
-const String memoTemplateColumnRadioButtonList = 'radio_button_list';
-const String memoTemplateColumnPullDownList = 'pull_down_list';
+const String memoTemplateColumnMultipleSelectList = 'multiple_select_list';
+const String memoTemplateColumnSingleSelectList = 'single_select_list';
 
 // spot table
 const String spotTableName = 'spot';
@@ -21,8 +21,8 @@ const String spotColumnGpsLatitude = 'gps_latitude';
 const String spotColumnGpsLongitude = 'gps_longitude';
 const String spotColumnMemoTemplateId = 'memo_template_id';
 const String spotColumnTextBox = 'text_box';
-const String spotColumnRadioButtonList = 'radio_button_list';
-const String spotColumnPullDown = 'pull_down';
+const String spotColumnMultipleSelectList = 'multiple_select_list';
+const String spotColumnSingleSelect = 'single_select';
 const String spotColumnCreatedAt = 'created_at';
 const String spotColumnUpdatedAt = 'updated_at';
 
@@ -38,8 +38,8 @@ create table $memoTemplateTableName (
   $memoTemplateColumnId integer primary key autoincrement,
   $memoTemplateColumnName text unique not null,
   $memoTemplateColumnTextBox integer not null,
-  $memoTemplateColumnRadioButtonList text not null,
-  $memoTemplateColumnPullDownList text not null)
+  $memoTemplateColumnMultipleSelectList text not null,
+  $memoTemplateColumnSingleSelectList text not null)
 ''');
     await db.execute('''
 create table $spotTableName (
@@ -50,8 +50,8 @@ create table $spotTableName (
   $spotColumnGpsLongitude real not null,
   $spotColumnMemoTemplateId integer references $memoTemplateTableName($memoTemplateColumnId) on delete restrict,
   $spotColumnTextBox text not null,
-  $spotColumnRadioButtonList text not null,
-  $spotColumnPullDown integer not null,
+  $spotColumnMultipleSelectList text not null,
+  $spotColumnSingleSelect integer not null,
   $spotColumnCreatedAt text not null,
   $spotColumnUpdatedAt text not null)
 ''');

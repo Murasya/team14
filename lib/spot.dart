@@ -8,8 +8,8 @@ class Spot {
   num gpsLongitude;
   int memoTemplateId;
   String textBox;
-  List<String> radioButtonList; // List of items that are ON
-  int pullDown; // Index of applicable items
+  List<String> multipleSelectList; // List of items that are ON
+  int singleSelect; // Index of applicable items
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -20,8 +20,8 @@ class Spot {
     this.gpsLongitude,
     this.memoTemplateId,
     this.textBox,
-    this.radioButtonList,
-    this.pullDown,
+    this.multipleSelectList,
+    this.singleSelect,
     this.createdAt,
     this.updatedAt,
   );
@@ -34,8 +34,8 @@ class Spot {
       spotColumnGpsLongitude: gpsLongitude,
       spotColumnMemoTemplateId: memoTemplateId,
       spotColumnTextBox: textBox,
-      spotColumnRadioButtonList: radioButtonList.join('\n'),
-      spotColumnPullDown: pullDown,
+      spotColumnMultipleSelectList: multipleSelectList.join('\n'),
+      spotColumnSingleSelect: singleSelect,
       spotColumnCreatedAt: createdAt.toIso8601String(),
       spotColumnUpdatedAt: updatedAt.toIso8601String(),
     };
@@ -50,8 +50,9 @@ class Spot {
         gpsLongitude = map[spotColumnGpsLongitude] as num,
         memoTemplateId = map[spotColumnMemoTemplateId] as int,
         textBox = map[spotColumnTextBox] as String,
-        radioButtonList = map[spotColumnRadioButtonList].toString().split('\n'),
-        pullDown = map[spotColumnPullDown] as int,
+        multipleSelectList =
+            map[spotColumnMultipleSelectList].toString().split('\n'),
+        singleSelect = map[spotColumnSingleSelect] as int,
         createdAt =
             DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
         updatedAt =
@@ -59,7 +60,7 @@ class Spot {
 
   @override
   String toString() =>
-      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${radioButtonList.join('/')}, $pullDown, $createdAt, $updatedAt';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${multipleSelectList.join('/')}, $singleSelect, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
