@@ -34,8 +34,7 @@ class MemoTemplate {
             map[memoTemplateColumnPullDownList].toString().split('\n');
 
   @override
-  String toString() =>
-      '$id, $name, $textBox, $radioButtonList, $pullDownList';
+  String toString() => '$id, $name, $textBox, $radioButtonList, $pullDownList';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
