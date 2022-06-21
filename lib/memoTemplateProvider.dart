@@ -1,26 +1,10 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'dbHelper.dart';
 import 'memoTemplate.dart';
-
-const String dbName = 'memo-app.db';
-const String memoTemplateTableName = 'memo_template';
 
 class MemoTemplateProvider {
   Future<Database> _open() async {
-    final dbDirectory = await getApplicationSupportDirectory();
-    final dbFilePath = dbDirectory.path;
-    return await openDatabase(join(dbFilePath, dbName), version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute('''
-create table $memoTemplateTableName (
-  $memoTemplateColumnId integer primary key autoincrement,
-  $memoTemplateColumnName text unique not null,
-  $memoTemplateColumnTextBox integer not null,
-  $memoTemplateColumnRadioButtonList text not null,
-  $memoTemplateColumnPullDownList text not null)
-''');
-    });
+    return await openHelper();
   }
 
   Future<int> insert(MemoTemplate memoTemplate) async {

@@ -3,7 +3,10 @@ const String columnTitle = 'title';
 const String columnTemperature = 'temperature';
 const String columnGpsLatitude = 'gps_latitude';
 const String columnGpsLongitude = 'gps_longitude';
-const String columnMemo = 'memo';
+const String columnMemoTemplateId = 'memo_template_id';
+const String columnTextBox = 'text_box';
+const String columnRadioButtonList = 'radio_button_list';
+const String columnPullDown = 'pull_down';
 const String columnCreatedAt = 'created_at';
 const String columnUpdatedAt = 'updated_at';
 
@@ -13,7 +16,10 @@ class Spot {
   num temperature;
   num gpsLatitude;
   num gpsLongitude;
-  String memo;
+  int memoTemplateId;
+  String textBox;
+  List<String> radioButtonList;
+  int pullDown;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -22,7 +28,10 @@ class Spot {
     this.temperature,
     this.gpsLatitude,
     this.gpsLongitude,
-    this.memo,
+    this.memoTemplateId,
+    this.textBox,
+    this.radioButtonList,
+    this.pullDown,
     this.createdAt,
     this.updatedAt,
   );
@@ -33,7 +42,10 @@ class Spot {
       columnTemperature: temperature,
       columnGpsLatitude: gpsLatitude,
       columnGpsLongitude: gpsLongitude,
-      columnMemo: memo,
+      columnMemoTemplateId: memoTemplateId,
+      columnTextBox: textBox,
+      columnRadioButtonList: radioButtonList.join('\n'),
+      columnPullDown: pullDown,
       columnCreatedAt: createdAt.toIso8601String(),
       columnUpdatedAt: updatedAt.toIso8601String(),
     };
@@ -46,13 +58,16 @@ class Spot {
         temperature = map[columnTemperature] as num,
         gpsLatitude = map[columnGpsLatitude] as num,
         gpsLongitude = map[columnGpsLongitude] as num,
-        memo = map[columnMemo] as String,
+        memoTemplateId = map[columnMemoTemplateId] as int,
+        textBox = map[columnTextBox] as String,
+        radioButtonList = map[columnRadioButtonList].toString().split('\n'),
+        pullDown = map[columnPullDown] as int,
         createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
         updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
 
   @override
   String toString() =>
-      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, $radioButtonList, $pullDown, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());

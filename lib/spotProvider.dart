@@ -1,32 +1,14 @@
 import 'dart:io';
 
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'dbHelper.dart';
 import 'spot.dart';
-
-const String dbName = 'memo-app.db';
-const String tableName = 'spot';
 
 class SpotProvider {
   Future<Database> _open() async {
-    final dbDirectory = await getApplicationSupportDirectory();
-    final dbFilePath = dbDirectory.path;
-    return await openDatabase(join(dbFilePath, dbName), version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute('''
-create table $tableName (
-  $columnId integer primary key autoincrement,
-  $columnTitle text not null,
-  $columnTemperature real not null,
-  $columnGpsLatitude real not null,
-  $columnGpsLongitude real not null,
-  $columnMemo text not null,
-  $columnCreatedAt text not null,
-  $columnUpdatedAt text not null)
-''');
-    });
+    return await openHelper();
   }
 
   Future<int> insert(Spot spot) async {
@@ -60,7 +42,7 @@ create table $tableName (
     final filePath = '${directory.path}/$fileName';
     var file = File(filePath);
     String fileContents =
-        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemo, $columnCreatedAt, $columnUpdatedAt\n';
+        '$columnId, $columnTitle, $columnTemperature, $columnGpsLatitude, $columnGpsLongitude, $columnMemoTemplateId, $columnTextBox, $columnRadioButtonList, $columnPullDown, $columnCreatedAt, $columnUpdatedAt\n';
     await selectAll().then((spots) => fileContents += spots.join('\n'));
     await file.writeAsString(fileContents);
     Share.shareFiles([filePath]);
