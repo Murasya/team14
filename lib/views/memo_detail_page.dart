@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 
-import '../models/memoTemplate.dart';
-import '../models/spot.dart';
+import 'package:team14/models/memoTemplate.dart';
+import 'package:team14/models/spot.dart';
 
 class MemoDetailPage extends StatefulWidget {
   const MemoDetailPage({Key? key}) : super(key: key);
