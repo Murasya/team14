@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/models/spotProvider.dart';
+import 'package:team14/views/memo_detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+        '/memo_detail_page': (context) => const MemoDetailPage(),
       },
     );
   }
