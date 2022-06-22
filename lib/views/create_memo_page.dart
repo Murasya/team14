@@ -77,12 +77,6 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
 
     spot.createdAt = spot.updatedAt = DateTime.now();
     await sp.insert(spot);
-
-    await sp.selectAll().then((spots) {
-      for (var spot in spots) {
-        spot.dumpAllColumns();
-      }
-    });
   }
 
   Widget _toggleItem(int idx) {
