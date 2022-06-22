@@ -1,11 +1,4 @@
-const String columnId = '_id';
-const String columnTitle = 'title';
-const String columnTemperature = 'temperature';
-const String columnGpsLatitude = 'gps_latitude';
-const String columnGpsLongitude = 'gps_longitude';
-const String columnMemo = 'memo';
-const String columnCreatedAt = 'created_at';
-const String columnUpdatedAt = 'updated_at';
+import 'dbHelper.dart';
 
 class Spot {
   int? id;
@@ -13,7 +6,10 @@ class Spot {
   num temperature;
   num gpsLatitude;
   num gpsLongitude;
-  String memo;
+  int memoTemplateId;
+  String? textBox;
+  List<bool>? multipleSelectList; // List of items on/off
+  int? singleSelect; // Index of applicable items
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -22,37 +18,58 @@ class Spot {
     this.temperature,
     this.gpsLatitude,
     this.gpsLongitude,
-    this.memo,
+    this.memoTemplateId,
+    this.textBox,
+    this.multipleSelectList,
+    this.singleSelect,
     this.createdAt,
     this.updatedAt,
   );
 
   Map<String, Object?> toMap() {
-    var map = <String, Object>{
-      columnTitle: title,
-      columnTemperature: temperature,
-      columnGpsLatitude: gpsLatitude,
-      columnGpsLongitude: gpsLongitude,
-      columnMemo: memo,
-      columnCreatedAt: createdAt.toIso8601String(),
-      columnUpdatedAt: updatedAt.toIso8601String(),
+    var map = <String, Object?>{
+      spotColumnTitle: title,
+      spotColumnTemperature: temperature,
+      spotColumnGpsLatitude: gpsLatitude,
+      spotColumnGpsLongitude: gpsLongitude,
+      spotColumnMemoTemplateId: memoTemplateId,
+      spotColumnTextBox: textBox,
+      spotColumnMultipleSelectList: multipleSelectList
+          ?.map((value) => value == true ? 1 : 0)
+          .toList()
+          .join('\n'),
+      spotColumnSingleSelect: singleSelect,
+      spotColumnCreatedAt: createdAt.toIso8601String(),
+      spotColumnUpdatedAt: updatedAt.toIso8601String(),
     };
+    if (multipleSelectList != null && multipleSelectList!.isEmpty) {
+      map[spotColumnMultipleSelectList] = null;
+    }
     return map;
   }
 
   Spot.fromMap(Map<String, Object?> map)
-      : id = map[columnId] as int,
-        title = map[columnTitle] as String,
-        temperature = map[columnTemperature] as num,
-        gpsLatitude = map[columnGpsLatitude] as num,
-        gpsLongitude = map[columnGpsLongitude] as num,
-        memo = map[columnMemo] as String,
-        createdAt = DateTime.parse(map[columnCreatedAt] as String).toLocal(),
-        updatedAt = DateTime.parse(map[columnUpdatedAt] as String).toLocal();
+      : id = map[spotColumnId] as int,
+        title = map[spotColumnTitle] as String,
+        temperature = map[spotColumnTemperature] as num,
+        gpsLatitude = map[spotColumnGpsLatitude] as num,
+        gpsLongitude = map[spotColumnGpsLongitude] as num,
+        memoTemplateId = map[spotColumnMemoTemplateId] as int,
+        textBox = map[spotColumnTextBox] as String?,
+        multipleSelectList = map[spotColumnMultipleSelectList]
+            ?.toString()
+            .split('\n')
+            .map((value) => value == '1' ? true : false)
+            .toList(),
+        singleSelect = map[spotColumnSingleSelect] as int?,
+        createdAt =
+            DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
+        updatedAt =
+            DateTime.parse(map[spotColumnUpdatedAt] as String).toLocal();
 
   @override
   String toString() =>
-      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memo, $createdAt, $updatedAt';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${multipleSelectList?.join('/')}, $singleSelect, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
