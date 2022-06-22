@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-Widget myAppBar(String title) {
+PreferredSizeWidget myAppBar(String title) {
   return AppBar(
     flexibleSpace: Text(
       title,
