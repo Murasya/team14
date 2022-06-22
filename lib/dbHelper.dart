@@ -49,9 +49,9 @@ create table $spotTableName (
   $spotColumnGpsLatitude real not null,
   $spotColumnGpsLongitude real not null,
   $spotColumnMemoTemplateId integer references $memoTemplateTableName($memoTemplateColumnId) on delete restrict,
-  $spotColumnTextBox text not null,
-  $spotColumnMultipleSelectList text not null,
-  $spotColumnSingleSelect integer not null,
+  $spotColumnTextBox text,
+  $spotColumnMultipleSelectList text,
+  $spotColumnSingleSelect integer,
   $spotColumnCreatedAt text not null,
   $spotColumnUpdatedAt text not null)
 ''');

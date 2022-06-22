@@ -7,9 +7,9 @@ class Spot {
   num gpsLatitude;
   num gpsLongitude;
   int memoTemplateId;
-  String textBox;
-  List<bool> multipleSelectList; // List of items on/off
-  int singleSelect; // Index of applicable items
+  String? textBox;
+  List<bool>? multipleSelectList; // List of items on/off
+  int? singleSelect; // Index of applicable items
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -27,7 +27,7 @@ class Spot {
   );
 
   Map<String, Object?> toMap() {
-    var map = <String, Object>{
+    var map = <String, Object?>{
       spotColumnTitle: title,
       spotColumnTemperature: temperature,
       spotColumnGpsLatitude: gpsLatitude,
@@ -35,13 +35,16 @@ class Spot {
       spotColumnMemoTemplateId: memoTemplateId,
       spotColumnTextBox: textBox,
       spotColumnMultipleSelectList: multipleSelectList
-          .map((value) => value == true ? 1 : 0)
+          ?.map((value) => value == true ? 1 : 0)
           .toList()
           .join('\n'),
       spotColumnSingleSelect: singleSelect,
       spotColumnCreatedAt: createdAt.toIso8601String(),
       spotColumnUpdatedAt: updatedAt.toIso8601String(),
     };
+    if (multipleSelectList != null && multipleSelectList!.isEmpty) {
+      map[spotColumnMultipleSelectList] = null;
+    }
     return map;
   }
 
@@ -52,13 +55,13 @@ class Spot {
         gpsLatitude = map[spotColumnGpsLatitude] as num,
         gpsLongitude = map[spotColumnGpsLongitude] as num,
         memoTemplateId = map[spotColumnMemoTemplateId] as int,
-        textBox = map[spotColumnTextBox] as String,
+        textBox = map[spotColumnTextBox] as String?,
         multipleSelectList = map[spotColumnMultipleSelectList]
-            .toString()
+            ?.toString()
             .split('\n')
             .map((value) => value == '1' ? true : false)
             .toList(),
-        singleSelect = map[spotColumnSingleSelect] as int,
+        singleSelect = map[spotColumnSingleSelect] as int?,
         createdAt =
             DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
         updatedAt =
@@ -66,7 +69,7 @@ class Spot {
 
   @override
   String toString() =>
-      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${multipleSelectList.join('/')}, $singleSelect, $createdAt, $updatedAt';
+      '$id, $title, $temperature, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${multipleSelectList?.join('/')}, $singleSelect, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
