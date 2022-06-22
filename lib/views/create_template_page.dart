@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sqflite/sqflite.dart';
+
+import 'package:team14/models/memoTemplate.dart';
+import 'package:team14/models/memoTemplateProvider.dart';
+import 'package:team14/views/common_widgets.dart';
 
 // debug class
 class CreateTemplateDebug extends StatelessWidget {
@@ -31,11 +36,10 @@ class _CreateTemplatePageState extends State<CreateTemplatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
+      // appBar: myAppBar(widget.title),
+      appBar: myAppBar(widget.title),
       body: ElementChoicePage(),
+
     );
   }
 }
@@ -194,10 +198,7 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
+      appBar: myAppBar(widget.title),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -297,10 +298,7 @@ class _CreatePullDownState extends State<CreatePullDown> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
+      appBar: myAppBar(widget.title),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -407,26 +405,45 @@ class _NamingTemplateState extends State<NamingTemplate> {
     var nameText = '';
     var pullDownText = '';
     var textMemo = 'no';
+    Set<String> multipleSelectList = {};
+    Set<String> singleSelectList = {};
 
     if (widget.isTextField == true) {
       textMemo = 'yes';
     }
 
-    if (widget.checkBoxValue != null){
+    if (widget.checkBoxValue != null) {
+      // 値の取得
       checkBoxText = widget.checkBoxValue!.text;
+      // 複数改行の削除
+      List<String> tempCheckBoxList = [];
+      for (var element in checkBoxText.split('\n')) {
+        if (element != '') {
+          tempCheckBoxList.add(element);
+        }
+      }
+      multipleSelectList = tempCheckBoxList.toSet();
     }
 
-    if (widget.nameValue != null){
+    if (widget.nameValue != null) {
+      // 値の取得
       nameText = widget.nameValue!.text;
       pullDownText = widget.pullDownValue!.text;
+
+      // 1つ目の要素は名前
+      singleSelectList.add(nameText);
+      // 2つ目以降は要素
+      List<String> tempPullDownList = [];
+      for (var element in pullDownText.split('\n')) {
+        if (element != '') {
+          tempPullDownList.add(element);
+        }
+      }
+      singleSelectList.addAll(tempPullDownList.toSet());
     }
 
-
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
+      appBar: myAppBar(widget.title),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -446,12 +463,25 @@ class _NamingTemplateState extends State<NamingTemplate> {
             child: Align(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
+                  onPressed: () async{
+                    // テンプレート作成完了、テンプレート一覧に遷移
+                    var templateName = templateNameController.value.text;
+                    if (templateName == ''){
+                      Fluttertoast.showToast(msg: 'テンプレート名が入力されていません');
+                    }
+                    else{
+                      // MemoTemplateインスタンスの作成
+                      MemoTemplate memoTemplate = MemoTemplate(templateName, widget.isTextField, multipleSelectList, singleSelectList);
+                      try{
+                        await MemoTemplateProvider()
+                            .insert(memoTemplate);
+                      }
+                      on DatabaseException catch(e){
+                        Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
+                      }
                       // TODO
-                      // テンプレート作成完了、テンプレート一覧に遷移
-                      var templateName = templateNameController.value;
-                    });
+                      // メモ一覧に遷移
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.blue,
