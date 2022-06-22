@@ -453,12 +453,6 @@ class _NamingTemplateState extends State<NamingTemplate> {
             controller: templateNameController,
             autofocus: true,
           ),
-          // debug Text
-          Text('debug variables'),
-          Text(textMemo),
-          Text(checkBoxText),
-          Text(nameText),
-          Text(pullDownText),
           Expanded(
             child: Align(
                 alignment: Alignment.bottomCenter,

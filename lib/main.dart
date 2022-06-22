@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:team14/views/create_template_page.dart';
 
 void main() {
-  // runApp(const MyApp());
-  runApp(const CreateTemplateDebug());
+  runApp(const MyApp());
 }
 
 
