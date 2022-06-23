@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:team14/views/create_template_page.dart';
 import 'package:team14/views/memo_detail_page.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
