@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/views/common_widgets.dart';
-
-class SelectTemplateDebug extends StatelessWidget {
-  const SelectTemplateDebug({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Select Temaplate Debug',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SelectTemplatePage(),
-    );
-  }
-}
 
 class SelectTemplatePage extends StatefulWidget {
   const SelectTemplatePage({Key? key}) : super(key: key);
@@ -84,10 +68,11 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                             onTap: () async {
                               var isCreateMemo;
                               isCreateMemo = await showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return CreateMemoDialog();
-                                  });
+                                context: context,
+                                builder: (_) {
+                                  return CreateMemoDialog();
+                                },
+                              );
                               if (isCreateMemo != null) {
                                 if (isCreateMemo) {
                                   // TODO
