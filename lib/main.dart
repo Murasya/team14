@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/memo_detail_page.dart';
-import 'package:team14/models/spotProvider.dart';
+import 'package:team14/views/common_widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -67,32 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-        actions: [
-          PopupMenuButton(itemBuilder: (context) {
-            return [
-              PopupMenuItem<int>(
-                value: 0,
-                child: Row(children: const <Widget>[
-                  Icon(
-                    Icons.download,
-                    color: Colors.grey,
-                  ),
-                  Text('CSVを出力'),
-                ]),
-              ),
-            ];
-          }, onSelected: (value) async {
-            SpotProvider sp = SpotProvider();
-            if (value == 0) {
-              await sp.shareAsCsvFromDB();
-            }
-          }),
-        ],
-      ),
+      appBar: myAppBar("メイン", context),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -128,36 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Text(
-                'すごいメモ',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('メモ一覧'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      // TODO: Change the code to move to the memo list.
-                      return const MyHomePage(title: 'Flutter Demo Home Page2');
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      drawer: myDrawer(context),
     );
   }
 }
