@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/memoTemplateProvider.dart';
+import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/spot.dart';
 import 'package:team14/views/common_widgets.dart';
 
-class SelectTemplatePage extends StatefulWidget {
-  const SelectTemplatePage({Key? key}) : super(key: key);
+class MemoListPage extends StatefulWidget {
+  const MemoListPage({Key? key}) : super(key: key);
 
-  final String title = 'テンプレート選択';
+  final String title = 'メモ一覧';
 
   @override
-  State<SelectTemplatePage> createState() => _SelectTemplatePageState();
+  State<MemoListPage> createState() => _MemoListPageState();
 }
 
-class _SelectTemplatePageState extends State<SelectTemplatePage> {
-  Future<List<MemoTemplate>>? templateList;
+class _MemoListPageState extends State<MemoListPage> {
+  Future<List<Spot>>? memoList;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    templateList = MemoTemplateProvider().selectAll();
+    memoList = spotProvider().selectAll();
   }
 
   // リスト更新
-  void deleteTemplate(int id) {
+  void deleteMemo(int id) {
     setState(() {
       MemoTemplateProvider().delete(id);
-      templateList = MemoTemplateProvider().selectAll();
+      memoList = MemoTemplateProvider().selectAll();
     });
   }
 
@@ -49,7 +49,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           children: [
             Expanded(
               child: FutureBuilder(
-                future: templateList,
+                future: memoList,
                 builder: (BuildContext context,
                     AsyncSnapshot<List<MemoTemplate>> snapshot) {
                   if (!snapshot.hasData) {
@@ -96,7 +96,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                                     },
                                   );
                                   if (isDelete != null) {
-                                    deleteTemplate(snapshot.data![index].id!);
+                                    deleteMemo(snapshot.data![index].id!);
                                   } else {
                                     print('not touched delete!');
                                   }
