@@ -141,20 +141,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
                   }),
                 },
               ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  onPressed: _onSubmit,
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size.fromWidth(double.maxFinite),
-                  ),
-                  child: const Text(
-                    '完了',
-                  ),
-                ),
-              ),
-            ),
+            myElevatedButton(title: '完了', onPressedCB: _onSubmit),
           ],
         ),
       ),
