@@ -50,7 +50,7 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar('メモ詳細', context),
+      appBar: myAppBar(title: 'メモ詳細', context: context),
       body: ListView(
         children: [
           listItem('タイトル', spot.title),

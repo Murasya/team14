@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:team14/models/spotProvider.dart';
 import 'package:team14/views/memo_detail_page.dart';
 
-PreferredSizeWidget myAppBar(String title, BuildContext context) {
+PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
     automaticallyImplyLeading: false,
     flexibleSpace: Text(
