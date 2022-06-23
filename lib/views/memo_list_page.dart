@@ -6,9 +6,7 @@ import 'package:team14/views/common_widgets.dart';
 
 class MemoListPage extends StatefulWidget {
   const MemoListPage({Key? key}) : super(key: key);
-
-  final String title = 'メモ一覧';
-
+  final String title = 'テンプレート選択';
   @override
   State<MemoListPage> createState() => _MemoListPageState();
 }
@@ -20,14 +18,14 @@ class _MemoListPageState extends State<MemoListPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    memoList = spotProvider().selectAll();
+    memoList = SpotProvider().selectAll();
   }
 
   // リスト更新
   void deleteMemo(int id) {
     setState(() {
-      MemoTemplateProvider().delete(id);
-      memoList = MemoTemplateProvider().selectAll();
+      SpotProvider().delete(id);
+      memoList = SpotProvider().selectAll();
     });
   }
 
@@ -38,7 +36,7 @@ class _MemoListPageState extends State<MemoListPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO
-          // メモテンプレ作成画面に遷移
+          // メモ作成画面に遷移
         },
         child: const Icon(Icons.add),
       ),
@@ -51,10 +49,10 @@ class _MemoListPageState extends State<MemoListPage> {
               child: FutureBuilder(
                 future: memoList,
                 builder: (BuildContext context,
-                    AsyncSnapshot<List<MemoTemplate>> snapshot) {
+                    AsyncSnapshot<List<Spot>> snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
-                      child: Text('テンプレートがありません'),
+                      child: Text('メモがありません'),
                     );
                   } else {
                     // DBにデータがある場合
@@ -65,40 +63,26 @@ class _MemoListPageState extends State<MemoListPage> {
                           return Card(
                             child: ListTile(
                               onTap: () async {
-                                var isCreateMemo;
-                                isCreateMemo = await showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return CreateMemoDialog();
-                                  },
-                                );
-                                if (isCreateMemo != null) {
-                                  if (isCreateMemo) {
-                                    // TODO
-                                    // メモ作成画面に遷移
-                                  }
-                                }
+                                // TODO
+                                // メモ詳細に遷移
                               },
                               leading: const Icon(
-                                Icons.square_outlined,
+                                Icons.description,
                               ),
-                              title: Text(snapshot.data![index].name),
+                              title: Text(snapshot.data![index].title),
                               trailing: IconButton(
                                 icon: const Icon(Icons.info_outlined),
                                 onPressed: () async {
-                                  // TODO
-                                  // 削除ポップアップ、編集・更新は未実装
+                                  // 削除ポップアップ
                                   var isDelete;
                                   isDelete = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return DeleteMemoTemplateDialog();
+                                      return DeleteMemoDialog();
                                     },
                                   );
                                   if (isDelete != null) {
                                     deleteMemo(snapshot.data![index].id!);
-                                  } else {
-                                    print('not touched delete!');
                                   }
                                 },
                               ),
@@ -108,7 +92,7 @@ class _MemoListPageState extends State<MemoListPage> {
                       );
                     } else {
                       return const Center(
-                        child: Text('メモテンプレートがまだ作成されていません'),
+                        child: Text('メモがまだ作成されていません'),
                       );
                     }
                   }
@@ -122,50 +106,18 @@ class _MemoListPageState extends State<MemoListPage> {
   }
 }
 
-// メモ作成ダイアログ
-class CreateMemoDialog extends StatelessWidget {
-  const CreateMemoDialog({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('このテンプレートでメモを作成しますか？'),
-      actions: <Widget>[
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text('いいえ'),
-          ),
-          onTap: () {
-            Navigator.pop(context, false);
-          },
-        ),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text('はい'),
-          ),
-          onTap: () {
-            Navigator.pop(context, true);
-          },
-        ),
-      ],
-    );
-  }
-}
 
 // メモ削除ダイアログ
-class DeleteMemoTemplateDialog extends StatefulWidget {
-  const DeleteMemoTemplateDialog({Key? key}) : super(key: key);
+class DeleteMemoDialog extends StatefulWidget {
+  const DeleteMemoDialog({Key? key}) : super(key: key);
 
   @override
-  State<DeleteMemoTemplateDialog> createState() =>
-      _DeleteMemoTemplateDialogState();
+  State<DeleteMemoDialog> createState() =>
+      _DeleteMemoDialogState();
 }
 
-class _DeleteMemoTemplateDialogState extends State<DeleteMemoTemplateDialog> {
+class _DeleteMemoDialogState extends State<DeleteMemoDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
