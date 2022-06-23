@@ -48,72 +48,73 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-                child: // 非同期でデータ取得、画面作成
-                    FutureBuilder(
-              future: memoList,
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<MemoTemplate>> snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Text('テンプレートがありません'),
-                  );
-                } else {
-                  // DBにデータがある場合
-                  if (snapshot.data!.isNotEmpty) {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            onTap: () async {
-                              var isCreateMemo;
-                              isCreateMemo = await showDialog(
-                                context: context,
-                                builder: (_) {
-                                  return CreateMemoDialog();
-                                },
-                              );
-                              if (isCreateMemo != null) {
-                                if (isCreateMemo) {
-                                  // TODO
-                                  // メモ作成画面に遷移
+              child: FutureBuilder(
+                future: memoList,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<MemoTemplate>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: Text('テンプレートがありません'),
+                    );
+                  } else {
+                    // DBにデータがある場合
+                    if (snapshot.data!.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              onTap: () async {
+                                var isCreateMemo;
+                                isCreateMemo = await showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return CreateMemoDialog();
+                                  },
+                                );
+                                if (isCreateMemo != null) {
+                                  if (isCreateMemo) {
+                                    // TODO
+                                    // メモ作成画面に遷移
+                                  }
                                 }
-                              }
-                            },
-                            leading: const Icon(
-                              Icons.square_outlined,
-                            ),
-                            title: Text(snapshot.data![index].name),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.info_outlined),
-                              onPressed: () async {
-                                // TODO
-                                // 削除ポップアップ、編集・更新は未実装
-                                var isDelete;
-                                isDelete = await showDialog(
+                              },
+                              leading: const Icon(
+                                Icons.square_outlined,
+                              ),
+                              title: Text(snapshot.data![index].name),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.info_outlined),
+                                onPressed: () async {
+                                  // TODO
+                                  // 削除ポップアップ、編集・更新は未実装
+                                  var isDelete;
+                                  isDelete = await showDialog(
                                     context: context,
                                     builder: (_) {
                                       return DeleteMemoTemplateDialog();
-                                    });
-                                if (isDelete != null) {
-                                  deleteMemo(snapshot.data![index].id!);
-                                } else {
-                                  print('not touched delete!');
-                                }
-                              },
+                                    },
+                                  );
+                                  if (isDelete != null) {
+                                    deleteMemo(snapshot.data![index].id!);
+                                  } else {
+                                    print('not touched delete!');
+                                  }
+                                },
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  } else {
-                    return const Center(
-                      child: Text('メモテンプレートがまだ作成されていません'),
-                    );
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('メモテンプレートがまだ作成されていません'),
+                      );
+                    }
                   }
-                }
-              },
-            )),
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -171,13 +172,14 @@ class _DeleteMemoTemplateDialogState extends State<DeleteMemoTemplateDialog> {
       title: const Text('アクション'),
       children: [
         Container(
-            padding: const EdgeInsets.all(5.0),
-            child: SimpleDialogOption(
-              child: const Text('削除'),
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-            ))
+          padding: const EdgeInsets.all(5.0),
+          child: SimpleDialogOption(
+            child: const Text('削除'),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
+        )
       ],
     );
   }
