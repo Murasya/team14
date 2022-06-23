@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:team14/models/spotProvider.dart';
 import 'package:team14/views/memo_detail_page.dart';
+import 'package:team14/models/spotProvider.dart';
 
 void main() {
   runApp(const MyApp());
