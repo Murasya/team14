@@ -4,8 +4,7 @@ import 'package:team14/views/select_template_page.dart';
 import 'package:team14/views/memo_detail_page.dart';
 
 void main() {
-  // runApp(const MyApp());
-  runApp(const SelectTemplateDebug());
+  runApp(const MyApp());
 }
 
 
