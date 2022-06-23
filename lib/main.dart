@@ -103,6 +103,36 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Text(
+                'すごいメモ',
+                style: TextStyle(
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: const Text('メモ一覧'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      // TODO: Change the code to move to the memo list.
+                      return const MyHomePage(title: 'Flutter Demo Home Page2');
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
