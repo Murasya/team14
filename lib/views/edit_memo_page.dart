@@ -18,7 +18,6 @@ class _EditMemoPageState extends State<EditMemoPage> {
   late Spot spot;
   late TextEditingController titleController;
   late TextEditingController textBoxController;
-  late List<DropdownMenuItem<int>> dropdownList;
 
   @override
   void initState() {
@@ -57,8 +56,6 @@ class _EditMemoPageState extends State<EditMemoPage> {
 
     titleController = TextEditingController(text: spot.title);
     textBoxController = TextEditingController();
-
-    dropdownList = createDropdownList(mt.singleSelectList);
   }
 
   Future<void> _onSubmit() async {
@@ -73,25 +70,6 @@ class _EditMemoPageState extends State<EditMemoPage> {
     await sp.update(spot);
   }
 
-  Widget _toggleItem(int idx) {
-    return SwitchListTile(
-      controlAffinity: ListTileControlAffinity.leading,
-      title: Text(mt.multipleSelectList.elementAt(idx)),
-      value: spot.multipleSelectList!.elementAt(idx),
-      onChanged: (value) {
-        setState(() {
-          spot.multipleSelectList![idx] = value;
-        });
-      },
-    );
-  }
-
-  void _onChangeSingleSelect(value) {
-    setState(() {
-      spot.singleSelect = value as int;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MemoFormHelper(
@@ -100,9 +78,6 @@ class _EditMemoPageState extends State<EditMemoPage> {
       spot: spot,
       titleController: titleController,
       textBoxController: textBoxController,
-      dropdownList: dropdownList,
-      toggleWidget: _toggleItem,
-      onChangedForSingleSelect: _onChangeSingleSelect,
       onSubmit: _onSubmit,
     );
   }
