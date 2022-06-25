@@ -102,6 +102,7 @@ class _MemoListPageState extends State<MemoListPage> {
           ],
         ),
       ),
+      drawer: myDrawer(context),
     );
   }
 }

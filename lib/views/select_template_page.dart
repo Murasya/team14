@@ -34,7 +34,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO
@@ -118,6 +118,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           ],
         ),
       ),
+      drawer: myDrawer(context),
     );
   }
 }

@@ -60,7 +60,7 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(widget.pageTitle),
+      appBar: myAppBar(title: widget.pageTitle, context: context),
       body: Container(
         padding: const EdgeInsets.all(30.0),
         child: Column(
@@ -110,6 +110,7 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
           ],
         ),
       ),
+      drawer: myDrawer(context),
     );
   }
 }

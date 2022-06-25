@@ -35,12 +35,7 @@ class CreateTemplatePage extends StatefulWidget {
 class _CreateTemplatePageState extends State<CreateTemplatePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: myAppBar(widget.title),
-      appBar: myAppBar(widget.title),
-      body: ElementChoicePage(),
-
-    );
+    return ElementChoicePage();
   }
 }
 
@@ -66,6 +61,7 @@ class _ElementChoicePageState extends State<ElementChoicePage> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -167,7 +163,8 @@ class _ElementChoicePageState extends State<ElementChoicePage> {
             )
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -198,7 +195,7 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -262,7 +259,8 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
             )
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -301,7 +299,7 @@ class _CreatePullDownState extends State<CreatePullDown> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -361,7 +359,8 @@ class _CreatePullDownState extends State<CreatePullDown> {
             )
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -449,7 +448,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
     }
 
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -495,7 +494,8 @@ class _NamingTemplateState extends State<NamingTemplate> {
             )
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
