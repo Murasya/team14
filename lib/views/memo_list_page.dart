@@ -32,7 +32,7 @@ class _MemoListPageState extends State<MemoListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO
