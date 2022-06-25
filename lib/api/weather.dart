@@ -46,7 +46,7 @@ class WeatherResponse {
     for (var weatherJson in listJson) {
       var weather = Weather(
         type: weatherJson['Type'],
-        date: _toDateTime(weatherJson['Date']) ?? DateTime.now(),
+        date: _toDateTime(weatherJson['Date']),
         rainfall: weatherJson['Rainfall'],
       );
       weatherList.add(weather);
@@ -55,7 +55,7 @@ class WeatherResponse {
   }
 }
 
-DateTime? _toDateTime(String timeStr) {
+DateTime _toDateTime(String timeStr) {
   try {
     final int year = int.parse(timeStr.substring(0, 4));
     final int month = int.parse(timeStr.substring(4, 6));
@@ -65,14 +65,11 @@ DateTime? _toDateTime(String timeStr) {
 
     return DateTime(year, month, day, hour, minute);
   } on RangeError catch (e) {
-    print('[RangeError] ${e.message}');
-    return null;
+    throw Exception('[RangeError] ${e.message}');
   } on FormatException catch (e) {
-    print('[FormatException] ${e.message}');
-    return null;
+    throw Exception('[FormatException] ${e.message}');
   } catch (e) {
-    print(e);
-    return null;
+    throw Exception(e);
   }
 }
 
