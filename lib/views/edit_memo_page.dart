@@ -4,14 +4,14 @@ import 'package:team14/models/spotProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 
-class CreateMemoPage extends StatefulWidget {
-  const CreateMemoPage({Key? key}) : super(key: key);
+class EditMemoPage extends StatefulWidget {
+  const EditMemoPage({Key? key}) : super(key: key);
 
   @override
-  State<CreateMemoPage> createState() => _CreateMemoPageState();
+  State<EditMemoPage> createState() => _EditMemoPageState();
 }
 
-class _CreateMemoPageState extends State<CreateMemoPage> {
+class _EditMemoPageState extends State<EditMemoPage> {
   SpotProvider sp = SpotProvider();
   final defaultSpotTitle = 'Memo';
   late MemoTemplate mt;
@@ -35,7 +35,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     );
     mt.id = 10;
 
-    // Initial value of memo
+    // Dummy data
+    /// NOTE: If you get the information from db,
+    /// you do not need the following code
     spot = Spot(
       defaultSpotTitle,
       0.0,
@@ -50,6 +52,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       DateTime.now(),
       DateTime.now(),
     );
+    spot.id = 30;
 
     titleController = TextEditingController(text: spot.title);
     textBoxController = TextEditingController();
@@ -63,14 +66,14 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
 
     // TODO: get API info
 
-    spot.createdAt = spot.updatedAt = DateTime.now();
-    await sp.insert(spot);
+    spot.updatedAt = DateTime.now();
+    await sp.update(spot);
   }
 
   @override
   Widget build(BuildContext context) {
     return MemoFormHelper(
-      pageTitle: "メモ作成",
+      pageTitle: "メモ編集",
       mt: mt,
       spot: spot,
       titleController: titleController,
