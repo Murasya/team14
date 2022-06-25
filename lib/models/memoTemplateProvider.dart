@@ -12,6 +12,17 @@ class MemoTemplateProvider {
     return await db.insert(memoTemplateTableName, memoTemplate.toMap());
   }
 
+  Future<MemoTemplate?> selectMemoTemplate(int id) async {
+    final db = await _open();
+    final maps = await db.query(
+      memoTemplateTableName,
+      where: '$memoTemplateColumnId = ?',
+      whereArgs: [id],
+    );
+    if (maps.isEmpty) return null;
+    return MemoTemplate.fromMap(maps.first);
+  }
+
   Future<MemoTemplate?> selectLatestMemoTemplate() async {
     final db = await _open();
     final maps = await db.query(
