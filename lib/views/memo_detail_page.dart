@@ -50,7 +50,7 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar('メモ詳細'),
+      appBar: myAppBar(title: 'メモ詳細', context: context),
       body: ListView(
         children: [
           listItem('タイトル', spot.title),
@@ -65,6 +65,7 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
                 mt.singleSelectList.elementAt(spot.singleSelect! + 1)),
         ],
       ),
+      drawer: myDrawer(context),
     );
   }
 }

@@ -1,11 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:team14/models/spotProvider.dart';
+import 'package:team14/views/memo_detail_page.dart';
 
-PreferredSizeWidget myAppBar(String title) {
+PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
     automaticallyImplyLeading: false,
     flexibleSpace: Text(
       title,
       style: const TextStyle(fontSize: 30.0, color: Colors.white),
+    ),
+    leading: Builder(
+      builder: (context) => IconButton(
+        icon: const Icon(Icons.density_medium),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+      ),
+    ),
+    actions: [
+      PopupMenuButton(itemBuilder: (context) {
+        return [
+          PopupMenuItem<int>(
+            value: 0,
+            child: Row(children: const <Widget>[
+              Icon(
+                Icons.download,
+                color: Colors.grey,
+              ),
+              Text('CSVを出力'),
+            ]),
+          ),
+        ];
+      }, onSelected: (value) async {
+        SpotProvider sp = SpotProvider();
+        if (value == 0) {
+          await sp.shareAsCsvFromDB();
+        }
+      }),
+    ],
+  );
+}
+
+Widget myDrawer(BuildContext context) {
+  return Drawer(
+    child: ListView(
+      children: [
+        const DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.white,
+          ),
+          child: Text(
+            'すごいメモ',
+            style: TextStyle(
+              fontSize: 24,
+            ),
+          ),
+        ),
+        ListTile(
+          title: const Text('メモ一覧'),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  // TODO: Change the code to move to the memo list.
+                  // (This is dummy class.)
+                  return const MemoDetailPage();
+                },
+              ),
+            );
+          },
+        ),
+      ],
     ),
   );
 }

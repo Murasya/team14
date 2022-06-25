@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/create_template_page.dart';
 import 'package:team14/views/memo_detail_page.dart';
+import 'package:team14/views/common_widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,11 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      appBar: myAppBar(title: "メイン", context: context),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -107,7 +104,8 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
