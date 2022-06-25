@@ -7,8 +7,8 @@ class Weather {
   // observation or forecast
   final String type;
 
-  // YYYYMMDDHHMI format
-  final String date;
+  // DateTime format
+  final DateTime date;
 
   // [mm/h]
   final double rainfall;
@@ -46,12 +46,33 @@ class WeatherResponse {
     for (var weatherJson in listJson) {
       var weather = Weather(
         type: weatherJson['Type'],
-        date: weatherJson['Date'],
+        date: _toDateTime(weatherJson['Date']) ?? DateTime.now(),
         rainfall: weatherJson['Rainfall'],
       );
       weatherList.add(weather);
     }
     return WeatherResponse(weatherList);
+  }
+}
+
+DateTime? _toDateTime(String timeStr) {
+  try {
+    final int year = int.parse(timeStr.substring(0, 4));
+    final int month = int.parse(timeStr.substring(4, 6));
+    final int day = int.parse(timeStr.substring(6, 8));
+    final int hour = int.parse(timeStr.substring(8, 10));
+    final int minute = int.parse(timeStr.substring(10, 12));
+
+    return DateTime(year, month, day, hour, minute);
+  } on RangeError catch (e) {
+    print('[RangeError] ${e.message}');
+    return null;
+  } on FormatException catch (e) {
+    print('[FormatException] ${e.message}');
+    return null;
+  } catch (e) {
+    print(e);
+    return null;
   }
 }
 
