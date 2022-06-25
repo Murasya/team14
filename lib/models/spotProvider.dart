@@ -16,6 +16,17 @@ class SpotProvider {
     return await db.insert(spotTableName, spot.toMap());
   }
 
+  Future<Spot?> selectSpot(int id) async {
+    final db = await _open();
+    final maps = await db.query(
+      spotTableName,
+      where: '$spotColumnId = ?',
+      whereArgs: [id],
+    );
+    if (maps.isEmpty) return null;
+    return Spot.fromMap(maps.first);
+  }
+
   Future<List<Spot>> selectAll() async {
     final db = await _open();
     final maps = await db.query(
