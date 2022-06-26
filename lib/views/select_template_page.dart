@@ -1,40 +1,51 @@
 import 'package:flutter/material.dart';
-
+import 'package:team14/views/common_widgets.dart';
+import 'package:team14/views/list_helper.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
-import 'package:team14/views/common_widgets.dart';
 
 class SelectTemplatePage extends StatefulWidget {
   const SelectTemplatePage({Key? key}) : super(key: key);
-
-  final String title = 'テンプレート選択';
 
   @override
   State<SelectTemplatePage> createState() => _SelectTemplatePageState();
 }
 
 class _SelectTemplatePageState extends State<SelectTemplatePage> {
-  Future<List<MemoTemplate>>? templateList;
+  late Future<List<MemoTemplate>> templateList;
+  late MemoTemplateProvider mtp = MemoTemplateProvider();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    templateList = MemoTemplateProvider().selectAll();
+    templateList = mtp.selectAll();
   }
 
-  // リスト更新
+  Future<void> onTapContent() async {
+    var isCreateMemo = await showDialog(
+      context: context,
+      builder: (_) {
+        return const CreateMemoDialog();
+      },
+    );
+    if (isCreateMemo) {
+      // TODO
+      // メモ作成画面に遷移
+    }
+  }
+
+  // Delete memo, update memoList
   void deleteTemplate(int id) {
     setState(() {
-      MemoTemplateProvider().delete(id);
-      templateList = MemoTemplateProvider().selectAll();
+      mtp.delete(id);
+      templateList = mtp.selectAll();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(title: widget.title, context: context),
+      appBar: myAppBar(title: 'テンプレート選択', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO
@@ -43,16 +54,18 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
         child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: FutureBuilder(
                 future: templateList,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<MemoTemplate>> snapshot) {
-                  if (!snapshot.hasData) {
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<List<MemoTemplate>> snapshot,
+                ) {
+                  if (snapshot.hasData == false) {
                     return const Center(
                       child: Text('テンプレートがありません'),
                     );
@@ -64,35 +77,18 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              onTap: () async {
-                                var isCreateMemo;
-                                isCreateMemo = await showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return CreateMemoDialog();
-                                  },
-                                );
-                                if (isCreateMemo != null) {
-                                  if (isCreateMemo) {
-                                    // TODO
-                                    // メモ作成画面に遷移
-                                  }
-                                }
-                              },
-                              leading: const Icon(
-                                Icons.square_outlined,
-                              ),
+                              onTap: onTapContent,
+                              leading: const Icon(Icons.square_outlined),
                               title: Text(snapshot.data![index].name),
                               trailing: IconButton(
                                 icon: const Icon(Icons.info_outlined),
                                 onPressed: () async {
-                                  // TODO
-                                  // 削除ポップアップ、編集・更新は未実装
-                                  var isDelete;
-                                  isDelete = await showDialog(
+                                  // TODO: 編集・更新は未実装
+                                  // 削除ポップアップ
+                                  final isDelete = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return DeleteMemoTemplateDialog();
+                                      return const DeleteDialog();
                                     },
                                   );
                                   if (isDelete != null) {
@@ -152,35 +148,6 @@ class CreateMemoDialog extends StatelessWidget {
             Navigator.pop(context, true);
           },
         ),
-      ],
-    );
-  }
-}
-
-// メモ削除ダイアログ
-class DeleteMemoTemplateDialog extends StatefulWidget {
-  const DeleteMemoTemplateDialog({Key? key}) : super(key: key);
-
-  @override
-  State<DeleteMemoTemplateDialog> createState() =>
-      _DeleteMemoTemplateDialogState();
-}
-
-class _DeleteMemoTemplateDialogState extends State<DeleteMemoTemplateDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: const Text('アクション'),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(5.0),
-          child: SimpleDialogOption(
-            child: const Text('削除'),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-          ),
-        )
       ],
     );
   }

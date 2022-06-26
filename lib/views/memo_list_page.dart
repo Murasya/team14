@@ -1,38 +1,43 @@
 import 'package:flutter/material.dart';
-
-import 'package:team14/models/spotProvider.dart';
-import 'package:team14/models/spot.dart';
 import 'package:team14/views/common_widgets.dart';
+import 'package:team14/views/list_helper.dart';
+import 'package:team14/models/spot.dart';
+import 'package:team14/models/spotProvider.dart';
 
 class MemoListPage extends StatefulWidget {
   const MemoListPage({Key? key}) : super(key: key);
-  final String title = 'テンプレート選択';
+
   @override
   State<MemoListPage> createState() => _MemoListPageState();
 }
 
 class _MemoListPageState extends State<MemoListPage> {
-  Future<List<Spot>>? memoList;
+  late Future<List<Spot>> memoList;
+  late SpotProvider sp = SpotProvider();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    memoList = SpotProvider().selectAll();
+    memoList = sp.selectAll();
   }
 
-  // リスト更新
+  void onTapContent() {
+    // TODO
+    // メモ詳細に遷移
+  }
+
+  // Delete memo, update memoList
   void deleteMemo(int id) {
     setState(() {
-      SpotProvider().delete(id);
-      memoList = SpotProvider().selectAll();
+      sp.delete(id);
+      memoList = sp.selectAll();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(title: widget.title, context: context),
+      appBar: myAppBar(title: 'メモ一覧', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO
@@ -41,16 +46,18 @@ class _MemoListPageState extends State<MemoListPage> {
         child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
               child: FutureBuilder(
                 future: memoList,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Spot>> snapshot) {
-                  if (!snapshot.hasData) {
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<List<Spot>> snapshot,
+                ) {
+                  if (snapshot.hasData == false) {
                     return const Center(
                       child: Text('メモがありません'),
                     );
@@ -62,23 +69,17 @@ class _MemoListPageState extends State<MemoListPage> {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              onTap: () async {
-                                // TODO
-                                // メモ詳細に遷移
-                              },
-                              leading: const Icon(
-                                Icons.description,
-                              ),
+                              onTap: onTapContent,
+                              leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),
                               trailing: IconButton(
                                 icon: const Icon(Icons.info_outlined),
                                 onPressed: () async {
                                   // 削除ポップアップ
-                                  var isDelete;
-                                  isDelete = await showDialog(
+                                  final isDelete = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return DeleteMemoDialog();
+                                      return const DeleteDialog();
                                     },
                                   );
                                   if (isDelete != null) {
@@ -103,37 +104,6 @@ class _MemoListPageState extends State<MemoListPage> {
         ),
       ),
       drawer: myDrawer(context),
-    );
-  }
-}
-
-
-
-// メモ削除ダイアログ
-class DeleteMemoDialog extends StatefulWidget {
-  const DeleteMemoDialog({Key? key}) : super(key: key);
-
-  @override
-  State<DeleteMemoDialog> createState() =>
-      _DeleteMemoDialogState();
-}
-
-class _DeleteMemoDialogState extends State<DeleteMemoDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: const Text('アクション'),
-      children: [
-        Container(
-          padding: const EdgeInsets.all(5.0),
-          child: SimpleDialogOption(
-            child: const Text('削除'),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-          ),
-        )
-      ],
     );
   }
 }
