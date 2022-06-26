@@ -51,7 +51,10 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
           builder: (BuildContext context,
               AsyncSnapshot<MemoTemplate?> snapshot,) {
             if (snapshot.hasData) {
-              createListView(list: snapshot.data!);
+              return createListView(list: snapshot.data!);
+            }
+            else{
+              return const Text('テンプレートが存在しません');
             }
           }
       ),
