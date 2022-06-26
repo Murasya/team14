@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
-import 'package:team14/views/common_widgets.dart';
 
 // debug class
 class CreateTemplateDebug extends StatelessWidget {
@@ -13,7 +13,7 @@ class CreateTemplateDebug extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Create Temaplate Debug',
+      title: 'Create Template Debug',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -35,12 +35,7 @@ class CreateTemplatePage extends StatefulWidget {
 class _CreateTemplatePageState extends State<CreateTemplatePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: myAppBar(widget.title),
-      appBar: myAppBar(widget.title),
-      body: ElementChoicePage(),
-
-    );
+    return const ElementChoicePage();
   }
 }
 
@@ -60,14 +55,55 @@ class _ElementChoicePageState extends State<ElementChoicePage> {
   var _isCheckBox = false;
   var _isPullDown = false;
 
+  void onSubmit() {
+    setState(() {
+      // チェックボックスからチェック
+      if (_isCheckBox == true) {
+        // CreateCheckBoxに遷移
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return CreateCheckBox(
+            isPullDown: _isPullDown,
+            isTextField: _isTextField,
+          );
+        }));
+      }
+      // 次にプルダウンをチェック
+      else if (_isPullDown == true) {
+        // CreateCheckBoxに遷移
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return CreatePullDown(
+            isCheckBox: _isCheckBox,
+            isTextField: _isTextField,
+          );
+        }));
+      }
+      // テキストフィールドだけだったら
+      else if (_isTextField == true) {
+        // テンプレート名入力画面に遷移
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return NamingTemplate(
+            isPullDown: _isPullDown,
+            isCheckBox: _isCheckBox,
+            isTextField: _isTextField,
+          );
+        }));
+      } else {
+        Fluttertoast.showToast(
+          msg: '少なくともどれか1つ選んでください',
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 3,
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 画面サイズ、ボタンのサイズ決定で用いる
-    var size = MediaQuery.of(context).size;
-
     return Scaffold(
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -108,66 +144,11 @@ class _ElementChoicePageState extends State<ElementChoicePage> {
                 ),
               ],
             ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        // チェックボックスからチェック
-                        if (_isCheckBox == true) {
-                          // CreateCheckBoxに遷移
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return CreateCheckBox(
-                              isPullDown: _isPullDown,
-                              isTextField: _isTextField,
-                            );
-                          }));
-                        }
-                        // 次にプルダウンをチェック
-                        else if (_isPullDown == true) {
-                          // CreateCheckBoxに遷移
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return CreatePullDown(
-                              isCheckBox: _isCheckBox,
-                              isTextField: _isTextField,
-                            );
-                          }));
-                        }
-                        // テキストフィールドだけだったら
-                        else if (_isTextField == true) {
-                          // テンプレート名入力画面に遷移
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return NamingTemplate(
-                              isPullDown: _isPullDown,
-                              isCheckBox: _isCheckBox,
-                              isTextField: _isTextField,
-                            );
-                          }));
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: '少なくともどれか1つ選んでください',
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 3,
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                        }
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
-                      fixedSize: Size(size.width * 0.9, 50),
-                    ),
-                    child: const Text('続ける'),
-                  )),
-            )
+            myElevatedButton(title: '続ける', onPressedCB: onSubmit),
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -192,15 +173,43 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
   // TextField用コントローラ
   final checkBoxController = TextEditingController();
 
+  void onSubmit() {
+    setState(() {
+      var checkBoxValue = checkBoxController.value;
+      if (checkBoxValue.text == '') {
+        Fluttertoast.showToast(
+            msg: '入力されていない項目があります', gravity: ToastGravity.CENTER);
+      } else {
+        if (widget.isPullDown == true) {
+          // CreatePullDownに遷移
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return CreatePullDown(
+              isCheckBox: true,
+              isTextField: widget.isTextField,
+              checkBoxValue: checkBoxValue,
+            );
+          }));
+        } else {
+          // テンプレート名入力画面に遷移
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return NamingTemplate(
+              isPullDown: widget.isPullDown,
+              isCheckBox: true,
+              isTextField: widget.isTextField,
+              checkBoxValue: checkBoxValue,
+            );
+          }));
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 画面サイズ、ボタンのサイズ決定で用いる
-    var size = MediaQuery.of(context).size;
-
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -215,54 +224,11 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
               ),
               autofocus: true,
             ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        var checkBoxValue = checkBoxController.value;
-                        if (checkBoxValue.text == '') {
-                          Fluttertoast.showToast(
-                              msg: '入力されていない項目があります',
-                              gravity: ToastGravity.CENTER);
-                        } else {
-                          if (widget.isPullDown == true) {
-                            // CreatePullDownに遷移
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return CreatePullDown(
-                                isCheckBox: true,
-                                isTextField: widget.isTextField,
-                                checkBoxValue: checkBoxValue,
-                              );
-                            }));
-                          } else {
-                            // テンプレート名入力画面に遷移
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return NamingTemplate(
-                                isPullDown: widget.isPullDown,
-                                isCheckBox: true,
-                                isTextField: widget.isTextField,
-                                checkBoxValue: checkBoxValue,
-                              );
-                            }));
-                          }
-                        }
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
-                      fixedSize: Size(size.width * 0.9, 50),
-                    ),
-                    child: const Text('続ける'),
-                  )),
-            )
+            myElevatedButton(title: '続ける', onPressedCB: onSubmit),
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -277,12 +243,12 @@ class CreatePullDown extends StatefulWidget {
 
   final String title = 'テンプレート作成';
 
-  const CreatePullDown(
-      {Key? key,
-      required this.isTextField,
-      required this.isCheckBox,
-      this.checkBoxValue})
-      : super(key: key);
+  const CreatePullDown({
+    Key? key,
+    required this.isTextField,
+    required this.isCheckBox,
+    this.checkBoxValue,
+  }) : super(key: key);
 
   @override
   State<CreatePullDown> createState() => _CreatePullDownState();
@@ -295,15 +261,35 @@ class _CreatePullDownState extends State<CreatePullDown> {
   // プルダウンリスト用コントローラ
   final pullDownController = TextEditingController();
 
+  void onSubmit() {
+    setState(() {
+      var nameValue = nameController.value;
+      var pullDownValue = pullDownController.value;
+      if (nameValue.text == '' || pullDownValue.text == '') {
+        Fluttertoast.showToast(
+            msg: '入力されていない項目があります', gravity: ToastGravity.CENTER);
+      } else {
+        // テンプレート名入力に遷移
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return NamingTemplate(
+            isPullDown: true,
+            isCheckBox: widget.isCheckBox,
+            isTextField: widget.isTextField,
+            checkBoxValue: widget.checkBoxValue,
+            nameValue: nameValue,
+            pullDownValue: pullDownValue,
+          );
+        }));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 画面サイズ、ボタンのサイズ決定で用いる
-    var size = MediaQuery.of(context).size;
-
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -323,45 +309,11 @@ class _CreatePullDownState extends State<CreatePullDown> {
               ),
               autofocus: true,
             ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        var nameValue = nameController.value;
-                        var pullDownValue = pullDownController.value;
-                        if (nameValue.text == '' || pullDownValue.text == '') {
-                          Fluttertoast.showToast(
-                              msg: '入力されていない項目があります',
-                              gravity: ToastGravity.CENTER);
-                        } else {
-                          // テンプレート名入力に遷移
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return NamingTemplate(
-                              isPullDown: true,
-                              isCheckBox: widget.isCheckBox,
-                              isTextField: widget.isTextField,
-                              checkBoxValue: widget.checkBoxValue,
-                              nameValue: nameValue,
-                              pullDownValue: pullDownValue,
-                            );
-                          }));
-                        }
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
-                      fixedSize: Size(size.width * 0.9, 50),
-                    ),
-                    child: const Text('続ける'),
-                  )),
-            )
+            myElevatedButton(title: '続ける', onPressedCB: onSubmit),
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }
@@ -384,15 +336,15 @@ class NamingTemplate extends StatefulWidget {
   final TextEditingValue? nameValue;
   final TextEditingValue? pullDownValue;
 
-  const NamingTemplate(
-      {Key? key,
-      required this.isTextField,
-      required this.isCheckBox,
-      required this.isPullDown,
-      this.checkBoxValue,
-      this.nameValue,
-      this.pullDownValue})
-      : super(key: key);
+  const NamingTemplate({
+    Key? key,
+    required this.isTextField,
+    required this.isCheckBox,
+    required this.isPullDown,
+    this.checkBoxValue,
+    this.nameValue,
+    this.pullDownValue,
+  }) : super(key: key);
 
   @override
   State<NamingTemplate> createState() => _NamingTemplateState();
@@ -403,20 +355,13 @@ class _NamingTemplateState extends State<NamingTemplate> {
 
   @override
   Widget build(BuildContext context) {
-    // 画面サイズ、ボタンのサイズ決定で用いる
-    var size = MediaQuery.of(context).size;
-
     // 入力されたテキストの確認用デバッグ変数
     var checkBoxText = '';
     var nameText = '';
     var pullDownText = '';
-    var textMemo = 'no';
+    // var textMemo = widget.isTextField ? 'yes' : 'no'; // Not used
     Set<String> multipleSelectList = {};
     Set<String> singleSelectList = {};
-
-    if (widget.isTextField == true) {
-      textMemo = 'yes';
-    }
 
     if (widget.checkBoxValue != null) {
       // 値の取得
@@ -448,10 +393,33 @@ class _NamingTemplateState extends State<NamingTemplate> {
       singleSelectList.addAll(tempPullDownList.toSet());
     }
 
+    Future<void> onSubmit() async {
+      // テンプレート作成完了、テンプレート一覧に遷移
+      var templateName = templateNameController.value.text;
+      if (templateName == '') {
+        Fluttertoast.showToast(msg: 'テンプレート名が入力されていません');
+      } else {
+        // MemoTemplateインスタンスの作成
+        MemoTemplate memoTemplate = MemoTemplate(
+          templateName,
+          widget.isTextField,
+          multipleSelectList,
+          singleSelectList,
+        );
+        try {
+          await MemoTemplateProvider().insert(memoTemplate);
+        } on DatabaseException catch (_) {
+          Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
+        }
+        // TODO
+        // メモ一覧に遷移
+      }
+    }
+
     return Scaffold(
-      appBar: myAppBar(widget.title),
+      appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -461,41 +429,11 @@ class _NamingTemplateState extends State<NamingTemplate> {
               controller: templateNameController,
               autofocus: true,
             ),
-            Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
-                    onPressed: () async{
-                      // テンプレート作成完了、テンプレート一覧に遷移
-                      var templateName = templateNameController.value.text;
-                      if (templateName == ''){
-                        Fluttertoast.showToast(msg: 'テンプレート名が入力されていません');
-                      }
-                      else{
-                        // MemoTemplateインスタンスの作成
-                        MemoTemplate memoTemplate = MemoTemplate(templateName, widget.isTextField, multipleSelectList, singleSelectList);
-                        try{
-                          await MemoTemplateProvider()
-                              .insert(memoTemplate);
-                        }
-                        on DatabaseException catch(e){
-                          Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
-                        }
-                        // TODO
-                        // メモ一覧に遷移
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
-                      fixedSize: Size(size.width * 0.9, 50),
-                    ),
-                    child: const Text('続ける'),
-                  )),
-            )
+            myElevatedButton(title: '完了', onPressedCB: onSubmit),
           ],
         ),
-      )
+      ),
+      drawer: myDrawer(context),
     );
   }
 }

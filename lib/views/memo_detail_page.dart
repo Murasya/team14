@@ -27,7 +27,7 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
           bottom: BorderSide(color: Colors.black12),
         ),
       ),
-      padding: const EdgeInsets.all(10.0),
+      padding: myPadding(),
       child: Row(
         children: [
           Expanded(
