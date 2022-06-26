@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:team14/models/spotProvider.dart';
-import 'package:team14/views/memo_detail_page.dart';
 
 PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
@@ -57,15 +56,13 @@ Widget myDrawer(BuildContext context) {
         ListTile(
           title: const Text('メモ一覧'),
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  // TODO: Change the code to move to the memo list.
-                  // (This is dummy class.)
-                  return const MemoDetailPage();
-                },
-              ),
-            );
+            Navigator.pushNamed(context, '/memo_list_page');
+          },
+        ),
+        ListTile(
+          title: const Text('テンプレート一覧'),
+          onTap: () {
+            Navigator.pushNamed(context, '/select_template_page');
           },
         ),
       ],
