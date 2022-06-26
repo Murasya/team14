@@ -16,13 +16,10 @@ class _EditMemoPageState extends State<EditMemoPage> {
   MemoTemplateProvider mtp = MemoTemplateProvider();
   SpotProvider sp = SpotProvider();
   final defaultSpotTitle = 'Memo';
-  late TextEditingController titleController;
-  late TextEditingController textBoxController;
 
-  Future<Map<String, dynamic>> connectDBProcess() async {
+  Future<Map<String, dynamic>> _connectDBProcess() async {
     // Dummy data
     /// NOTE: Receive Memo id at screen transition.
-    ///
     const int memoId = 1;
     Spot? spot = await sp.selectSpot(memoId);
     if (spot == null) {
@@ -38,19 +35,12 @@ class _EditMemoPageState extends State<EditMemoPage> {
   @override
   void initState() {
     super.initState();
-
-    titleController = TextEditingController();
-    textBoxController = TextEditingController();
-
-    connectDBProcess();
+    _connectDBProcess();
   }
 
-  Future<void> _onSubmit(MemoTemplate mt, Spot spot) async {
-    spot.title = titleController.text.isNotEmpty
-        ? titleController.text
-        : defaultSpotTitle;
-    if (mt.textBox) spot.textBox = textBoxController.text;
-
+  Future<void> _onSubmit(Spot spot) async {
+    // The textBox, multipleSelectList, and singleSelect
+    // have already been updated in the previous process.
     spot.updatedAt = DateTime.now();
     await sp.update(spot);
   }
@@ -59,9 +49,8 @@ class _EditMemoPageState extends State<EditMemoPage> {
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ編集",
-      titleController: titleController,
-      textBoxController: textBoxController,
-      connectDBProcessCB: connectDBProcess(),
+      defaultSpotTitle: defaultSpotTitle,
+      connectDBProcessCB: _connectDBProcess(),
       onSubmitToDB: _onSubmit,
     );
   }

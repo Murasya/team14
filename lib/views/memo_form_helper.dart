@@ -5,17 +5,15 @@ import 'package:team14/models/spot.dart';
 
 class MemoFormHelper extends StatefulWidget {
   final String pageTitle;
-  final TextEditingController titleController;
-  final TextEditingController textBoxController;
   final Future<Map<String, dynamic>> connectDBProcessCB;
+  final String defaultSpotTitle;
   final Function onSubmitToDB;
 
   const MemoFormHelper({
     Key? key,
     required this.pageTitle,
-    required this.titleController,
-    required this.textBoxController,
     required this.connectDBProcessCB,
+    required this.defaultSpotTitle,
     required this.onSubmitToDB,
   }) : super(key: key);
 
@@ -24,9 +22,12 @@ class MemoFormHelper extends StatefulWidget {
 }
 
 class _MemoFormHelperState extends State<MemoFormHelper> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController textBoxController = TextEditingController();
   late List<DropdownMenuItem<int>> dropdownList;
   late MemoTemplate mt;
   late Spot spot;
+  bool isInitialized = false;
 
   @override
   void initState() {
@@ -34,10 +35,12 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
   }
 
   void _initializeAsyncValues(Map<String, dynamic> asyncValues) {
-    mt = asyncValues['MemoTemplate'];
-    spot = asyncValues['Spot'];
-    widget.titleController.text = spot.title;
-    widget.textBoxController.text = spot.textBox ?? '';
+    if (isInitialized) return;
+    isInitialized = true;
+    mt = asyncValues['$MemoTemplate'];
+    spot = asyncValues['$Spot'];
+    titleController.text = spot.title;
+    textBoxController.text = spot.textBox ?? '';
 
     // Create drop down List
     int index = 1; // Corresponding to "mt.singleSelectList"'s index.
@@ -52,7 +55,13 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
   }
 
   void _onSubmit() {
-    widget.onSubmitToDB(mt, spot);
+    // Update Spot data.
+    spot.title = titleController.text.isNotEmpty
+        ? titleController.text
+        : widget.defaultSpotTitle;
+    if (mt.textBox) spot.textBox = textBoxController.text;
+
+    widget.onSubmitToDB(spot);
   }
 
   Widget _toggleItem(int idx) {
@@ -74,7 +83,7 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
         Padding(
           padding: const EdgeInsets.only(bottom: 50),
           child: TextField(
-            controller: widget.titleController,
+            controller: titleController,
             autofocus: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
@@ -85,7 +94,7 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
         ),
         if (mt.textBox)
           TextField(
-            controller: widget.textBoxController,
+            controller: textBoxController,
             autofocus: true,
             keyboardType: TextInputType.multiline,
             maxLines: null,

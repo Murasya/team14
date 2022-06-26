@@ -18,10 +18,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   MemoTemplateProvider mtp = MemoTemplateProvider();
   SpotProvider sp = SpotProvider();
   final defaultSpotTitle = 'Memo';
-  late TextEditingController titleController;
-  late TextEditingController textBoxController;
 
-  Future<Map<String, dynamic>> connectDBProcess() async {
+  Future<Map<String, dynamic>> _connectDBProcess() async {
     // Dummy data
     /// NOTE: Receive Memo template id at screen transition.
     const int templateMemoId = 1;
@@ -54,14 +52,12 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   @override
   void initState() {
     super.initState();
-
-    titleController = TextEditingController();
-    textBoxController = TextEditingController();
-
-    connectDBProcess();
+    _connectDBProcess();
   }
 
-  Future<void> _onSubmit(MemoTemplate mt, Spot spot) async {
+  Future<void> _onSubmit(Spot spot) async {
+    // The textBox, multipleSelectList, and singleSelect
+    // have already been updated in the previous process.
     try {
       // TODO: get current location
       // This is dummy location
@@ -78,12 +74,6 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
         output: 'json',
         interval: 5,
       );
-
-      // Update Spot data.
-      spot.title = titleController.text.isNotEmpty
-          ? titleController.text
-          : defaultSpotTitle;
-      if (mt.textBox) spot.textBox = textBoxController.text;
 
       spot.weatherObsDate = jsonResponse.weatherList.first.date;
       spot.rainfallList =
@@ -104,9 +94,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ作成",
-      titleController: titleController,
-      textBoxController: textBoxController,
-      connectDBProcessCB: connectDBProcess(),
+      defaultSpotTitle: defaultSpotTitle,
+      connectDBProcessCB: _connectDBProcess(),
       onSubmitToDB: _onSubmit,
     );
   }
