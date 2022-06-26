@@ -26,7 +26,11 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
           listItem('タイトル', widget.spot.title),
           listItem('位置情報',
               '${widget.spot.gpsLatitude}, ${widget.spot.gpsLongitude}'),
-          listItem('降水量', '${widget.spot.weatherObsDate}'),
+          // Includes data on precipitation up to one hour ahead.
+          for (var i = 0; i < widget.spot.rainfallList.length; i++)
+            listItem(
+                '降水量(${widget.spot.weatherObsDate.add(Duration(minutes: 60 ~/ (widget.spot.rainfallList.length - 1) * i))})',
+                '${widget.spot.rainfallList.elementAt(i)}'),
           if (widget.memoTemplate.textBox)
             listItem('テキスト', '${widget.spot.textBox}'),
           for (var i = 0;
