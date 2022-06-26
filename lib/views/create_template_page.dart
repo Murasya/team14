@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/views/common_widgets.dart';
@@ -63,7 +64,7 @@ class _ElementChoicePageState extends State<ElementChoicePage> {
     return Scaffold(
       appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -198,7 +199,7 @@ class _CreateCheckBoxState extends State<CreateCheckBox> {
     return Scaffold(
       appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -303,7 +304,7 @@ class _CreatePullDownState extends State<CreatePullDown> {
     return Scaffold(
       appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -449,7 +450,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
     return Scaffold(
       appBar: myAppBar(title: widget.title, context: context),
       body: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

@@ -73,6 +73,10 @@ Widget myDrawer(BuildContext context) {
   );
 }
 
+EdgeInsetsGeometry myPadding() {
+  return const EdgeInsets.all(20.0);
+}
+
 Widget myElevatedButton(
     {required String title, required VoidCallback onPressedCB}) {
   return Expanded(

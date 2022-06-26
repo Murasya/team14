@@ -54,7 +54,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
         child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: myPadding(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
