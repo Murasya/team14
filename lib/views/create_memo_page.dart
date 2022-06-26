@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:team14/views/memo_form_helper.dart';
+import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
+import 'package:team14/api/weather.dart';
 
 class CreateMemoPage extends StatefulWidget {
   const CreateMemoPage({Key? key}) : super(key: key);
@@ -12,33 +15,25 @@ class CreateMemoPage extends StatefulWidget {
 }
 
 class _CreateMemoPageState extends State<CreateMemoPage> {
+  MemoTemplateProvider mtp = MemoTemplateProvider();
   SpotProvider sp = SpotProvider();
   final defaultSpotTitle = 'Memo';
-  late MemoTemplate mt;
-  late Spot spot;
-  late TextEditingController titleController;
-  late TextEditingController textBoxController;
 
-  @override
-  void initState() {
-    super.initState();
-
+  Future<Map<String, dynamic>> _connectDBProcess() async {
     // Dummy data
-    /// NOTE: If you get the information from db,
-    /// you do not need the following code
-    mt = MemoTemplate(
-      'template',
-      true,
-      {'駐輪しやすい', '受け取り待機時間なし', '店員の態度がいい'},
-      // {'オファー金額', '800~1000円', '1000~1200円'},
-      {},
-    );
-    mt.id = 10;
+    /// NOTE: Receive Memo template id at screen transition.
+    const int templateMemoId = 1;
 
-    // Initial value of memo
-    spot = Spot(
+    MemoTemplate? mt = await mtp.selectMemoTemplate(templateMemoId);
+    if (mt == null) {
+      throw StateError('[${runtimeType.toString()}] Memo template id is null!');
+    }
+
+    // Initialize Spot
+    Spot spot = Spot(
       defaultSpotTitle,
-      0.0,
+      DateTime.now(),
+      [],
       0.0,
       0.0,
       mt.id!,
@@ -51,31 +46,57 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       DateTime.now(),
     );
 
-    titleController = TextEditingController(text: spot.title);
-    textBoxController = TextEditingController();
+    return {'${mt.runtimeType}': mt, '${spot.runtimeType}': spot};
   }
 
-  Future<void> _onSubmit() async {
-    spot.title = titleController.text.isNotEmpty
-        ? titleController.text
-        : defaultSpotTitle;
-    if (mt.textBox) spot.textBox = textBoxController.text;
+  @override
+  void initState() {
+    super.initState();
+    _connectDBProcess();
+  }
 
-    // TODO: get API info
+  Future<void> _onSubmit(Spot spot) async {
+    // The textBox, multipleSelectList, and singleSelect
+    // have already been updated in the previous process.
+    try {
+      // TODO: get current location
+      // This is dummy location
+      const latitude = 32.789997;
+      const longitude = 131.689920;
 
-    spot.createdAt = spot.updatedAt = DateTime.now();
-    await sp.insert(spot);
+      // get API info
+      await dotenv.load(fileName: '.env');
+      final String appID = dotenv.get('Y_API');
+
+      final jsonResponse = await getWeather(
+        appId: appID,
+        coordinates: '$longitude,$latitude',
+        output: 'json',
+        interval: 5,
+      );
+
+      spot.weatherObsDate = jsonResponse.weatherList.first.date;
+      spot.rainfallList =
+          jsonResponse.weatherList.map((e) => e.rainfall).toList();
+
+      spot.gpsLatitude = latitude;
+      spot.gpsLongitude = longitude;
+
+      spot.createdAt = spot.updatedAt = DateTime.now();
+
+      await sp.insert(spot);
+    } on Exception catch (e) {
+      throw Exception('$e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ作成",
-      mt: mt,
-      spot: spot,
-      titleController: titleController,
-      textBoxController: textBoxController,
-      onSubmit: _onSubmit,
+      defaultSpotTitle: defaultSpotTitle,
+      connectDBProcessCB: _connectDBProcess(),
+      onSubmitToDB: _onSubmit,
     );
   }
 }

@@ -16,7 +16,8 @@ const String memoTemplateColumnSingleSelectList = 'single_select_list';
 const String spotTableName = 'spot';
 const String spotColumnId = '_id';
 const String spotColumnTitle = 'title';
-const String spotColumnTemperature = 'temperature';
+const String spotColumnWeatherObsDate = 'weather_obs_date';
+const String spotColumnRainfallList = 'rainfall_list';
 const String spotColumnGpsLatitude = 'gps_latitude';
 const String spotColumnGpsLongitude = 'gps_longitude';
 const String spotColumnMemoTemplateId = 'memo_template_id';
@@ -45,7 +46,8 @@ create table $memoTemplateTableName (
 create table $spotTableName (
   $spotColumnId integer primary key autoincrement,
   $spotColumnTitle text not null,
-  $spotColumnTemperature real not null,
+  $spotColumnWeatherObsDate text not null,
+  $spotColumnRainfallList text not null,
   $spotColumnGpsLatitude real not null,
   $spotColumnGpsLongitude real not null,
   $spotColumnMemoTemplateId integer references $memoTemplateTableName($memoTemplateColumnId) on delete restrict,
