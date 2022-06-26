@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
-
+import 'package:team14/views/detail_helper.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 
@@ -19,33 +19,6 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
       {'オファー金額', '800~1000円', '1000~1200円'});
   Spot spot = Spot("マクドナルド 石橋店", 21.0, 34.807805, 135.444553, 1, "近くにチェーン店がある",
       [true, true, true], 0, DateTime.now(), DateTime.now());
-
-  Widget listItem(String leftText, String rightText) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.black12),
-        ),
-      ),
-      padding: myPadding(),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              leftText,
-              textAlign: TextAlign.left,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              rightText,
-              textAlign: TextAlign.right,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
