@@ -25,21 +25,25 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
     memoTemplate = mtp.selectMemoTemplate(widget.id);
   }
 
-  Widget createListView({required list}){
+  Widget createListView({required list}) {
     List<Widget> widgets = [
       listItem('テンプレート名', list.name),
-      listItem(
-          'テキストボックスの利用', list.textBox ? 'はい' : 'いいえ'),
+      listItem('テキストボックスの利用', list.textBox ? 'あり' : 'なし'),
     ];
-    if (list.multipleSelectList.isNotEmpty){
-      widgets.addAll(getListWidget(list: list.multipleSelectList, leftName: 'チェックボックス'));
+    if (list.multipleSelectList.isNotEmpty) {
+      widgets.addAll(
+          getListWidget(list: list.multipleSelectList, leftName: 'チェックボックス'));
+    } else {
+      widgets.add(listItem('チェックボックスの利用', 'なし'));
     }
-    if (list.singleSelectList.isNotEmpty){
-      widgets.addAll(getListWidget(list: list.singleSelectList, leftName: 'プルダウン'));
+    if (list.singleSelectList.isNotEmpty) {
+      widgets.addAll(
+          getListWidget(list: list.singleSelectList, leftName: 'プルダウン'));
+    } else {
+      widgets.add(listItem('プルダウンの利用', 'なし'));
     }
-    return ListView(
-        children: widgets
-    );
+
+    return ListView(children: widgets);
   }
 
   @override
@@ -48,16 +52,17 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
       appBar: myAppBar(title: 'メモ詳細', context: context),
       body: FutureBuilder(
           future: memoTemplate,
-          builder: (BuildContext context,
-              AsyncSnapshot<MemoTemplate?> snapshot,) {
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<MemoTemplate?> snapshot,
+          ) {
             if (snapshot.hasData) {
               return createListView(list: snapshot.data!);
-            }
-            else{
+            } else {
               return const Text('テンプレートが存在しません');
             }
-          }
-      ),
-      drawer: myDrawer(context),);
+          }),
+      drawer: myDrawer(context),
+    );
   }
 }
