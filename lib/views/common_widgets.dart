@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/models/spotProvider.dart';
 import 'package:team14/views/memo_detail_page.dart';
-import 'package:team14/views/create_template_page.dart';
-import 'package:team14/views/memo_detail_page.dart';
-import 'package:team14/views/common_widgets.dart';
-import 'package:team14/views/create_memo_page.dart';
-import 'package:team14/views/edit_memo_page.dart';
-import 'package:team14/views/memo_list_page.dart';
-import 'package:team14/views/select_template_page.dart';
 
 PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
@@ -39,16 +32,7 @@ PreferredSizeWidget myAppBar({required title, required context}) {
       }, onSelected: (value) async {
         SpotProvider sp = SpotProvider();
         if (value == 0) {
-          // await sp.shareAsCsvFromDB();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                // TODO: Change the code to move to the memo list.
-                // (This is dummy class.)
-                return const CreateTemplatePage();
-              },
-            ),
-          );
+          await sp.shareAsCsvFromDB();
         }
       }),
     ],
@@ -78,7 +62,7 @@ Widget myDrawer(BuildContext context) {
                 builder: (context) {
                   // TODO: Change the code to move to the memo list.
                   // (This is dummy class.)
-                  return const SelectTemplatePage();
+                  return const MemoDetailPage();
                 },
               ),
             );
