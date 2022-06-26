@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/memo_form_helper.dart';
+import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
@@ -12,59 +13,43 @@ class EditMemoPage extends StatefulWidget {
 }
 
 class _EditMemoPageState extends State<EditMemoPage> {
+  MemoTemplateProvider mtp = MemoTemplateProvider();
   SpotProvider sp = SpotProvider();
   final defaultSpotTitle = 'Memo';
-  late MemoTemplate mt;
-  late Spot spot;
   late TextEditingController titleController;
   late TextEditingController textBoxController;
+
+  Future<Map<String, dynamic>> connectDBProcess() async {
+    // Dummy data
+    /// NOTE: Receive Memo id at screen transition.
+    ///
+    const int memoId = 1;
+    Spot? spot = await sp.selectSpot(memoId);
+    if (spot == null) {
+      throw StateError('[${runtimeType.toString()}] Memo id is null!');
+    }
+
+    // Never null due to foreign key constraints.
+    MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
+
+    return {'${mt.runtimeType}': mt, '${spot.runtimeType}': spot};
+  }
 
   @override
   void initState() {
     super.initState();
 
-    // Dummy data
-    /// NOTE: If you get the information from db,
-    /// you do not need the following code
-    mt = MemoTemplate(
-      'template',
-      true,
-      {'駐輪しやすい', '受け取り待機時間なし', '店員の態度がいい'},
-      // {'オファー金額', '800~1000円', '1000~1200円'},
-      {},
-    );
-    mt.id = 10;
-
-    // Dummy data
-    /// NOTE: If you get the information from db,
-    /// you do not need the following code
-    spot = Spot(
-      defaultSpotTitle,
-      0.0,
-      0.0,
-      0.0,
-      mt.id!,
-      mt.textBox ? '' : null,
-      mt.multipleSelectList.isNotEmpty
-          ? List.generate(mt.multipleSelectList.length, (_) => false)
-          : null,
-      mt.singleSelectList.isNotEmpty ? 1 : null,
-      DateTime.now(),
-      DateTime.now(),
-    );
-    spot.id = 30;
-
-    titleController = TextEditingController(text: spot.title);
+    titleController = TextEditingController();
     textBoxController = TextEditingController();
+
+    connectDBProcess();
   }
 
-  Future<void> _onSubmit() async {
+  Future<void> _onSubmit(MemoTemplate mt, Spot spot) async {
     spot.title = titleController.text.isNotEmpty
         ? titleController.text
         : defaultSpotTitle;
     if (mt.textBox) spot.textBox = textBoxController.text;
-
-    // TODO: get API info
 
     spot.updatedAt = DateTime.now();
     await sp.update(spot);
@@ -74,11 +59,10 @@ class _EditMemoPageState extends State<EditMemoPage> {
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ編集",
-      mt: mt,
-      spot: spot,
       titleController: titleController,
       textBoxController: textBoxController,
-      onSubmit: _onSubmit,
+      connectDBProcessCB: connectDBProcess(),
+      onSubmitToDB: _onSubmit,
     );
   }
 }
