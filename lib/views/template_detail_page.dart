@@ -2,28 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/detail_helper.dart';
 import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/memoTemplateProvider.dart';
 
 class TemplateDetailPage extends StatefulWidget {
-  const TemplateDetailPage({Key? key, required this.id}) : super(key: key);
+  const TemplateDetailPage({Key? key, required this.memoTemplate}) : super(key: key);
 
   final String title = 'テンプレート詳細';
 
-  final int id;
+  final MemoTemplate memoTemplate;
 
   @override
   State<TemplateDetailPage> createState() => _TemplateDetailPageState();
 }
 
 class _TemplateDetailPageState extends State<TemplateDetailPage> {
-  late MemoTemplateProvider mtp = MemoTemplateProvider();
-  late Future<MemoTemplate?> memoTemplate;
-
-  @override
-  void initState() {
-    super.initState();
-    memoTemplate = mtp.selectMemoTemplate(widget.id);
-  }
 
   Widget createListView({required list}) {
     List<Widget> widgets = [
@@ -50,18 +41,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: 'メモ詳細', context: context),
-      body: FutureBuilder(
-          future: memoTemplate,
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<MemoTemplate?> snapshot,
-          ) {
-            if (snapshot.hasData) {
-              return createListView(list: snapshot.data!);
-            } else {
-              return const Text('テンプレートが存在しません');
-            }
-          }),
+      body: createListView(list: widget.memoTemplate),
       drawer: myDrawer(context),
     );
   }
