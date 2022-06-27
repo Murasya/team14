@@ -5,9 +5,11 @@ import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 
 class MemoDetailPage extends StatefulWidget {
-  const MemoDetailPage(
-      {Key? key, required this.memoTemplate, required this.spot})
-      : super(key: key);
+  const MemoDetailPage({
+    Key? key,
+    required this.memoTemplate,
+    required this.spot,
+  }) : super(key: key);
 
   final MemoTemplate memoTemplate;
   final Spot spot;
