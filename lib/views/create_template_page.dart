@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
@@ -38,6 +39,7 @@ class _CreateTemplatePageState extends State<CreateTemplatePage> {
     return const ElementChoicePage();
   }
 }
+
 
 // 要素選択画面
 class ElementChoicePage extends StatefulWidget {
@@ -363,6 +365,10 @@ class _NamingTemplateState extends State<NamingTemplate> {
     Set<String> multipleSelectList = {};
     Set<String> singleSelectList = {};
 
+    // テンプレid
+    late SharedPreferences prefs;
+    late int defaultTemplate;
+
     if (widget.checkBoxValue != null) {
       // 値の取得
       checkBoxText = widget.checkBoxValue!.text;
@@ -391,6 +397,20 @@ class _NamingTemplateState extends State<NamingTemplate> {
         }
       }
       singleSelectList.addAll(tempPullDownList.toSet());
+    }
+
+    // テンプレid取得
+    _getPrefItems() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
+      });
+    }
+
+    // テンプレid登録
+    _setPrefItems() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('defaultTemplate', defaultTemplate);
     }
 
     Future<void> onSubmit() async {

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 // Delete Dialog
-class DeleteDialog extends StatefulWidget {
-  const DeleteDialog({Key? key}) : super(key: key);
+class ActionDialog extends StatefulWidget {
+  const ActionDialog({Key? key, required String this.uniqueAction}) : super(key: key);
+
+  final String uniqueAction;
 
   @override
-  State<DeleteDialog> createState() => _DeleteDialogState();
+  State<ActionDialog> createState() => _ActionDialogState();
 }
 
-class _DeleteDialogState extends State<DeleteDialog> {
+class _ActionDialogState extends State<ActionDialog> {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
@@ -17,9 +19,18 @@ class _DeleteDialogState extends State<DeleteDialog> {
         Container(
           padding: const EdgeInsets.all(5.0),
           child: SimpleDialogOption(
+            child: Text(widget.uniqueAction),
+            onPressed: () {
+              Navigator.pop(context, widget.uniqueAction);
+            },
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(5.0),
+          child: SimpleDialogOption(
             child: const Text('削除'),
             onPressed: () {
-              Navigator.pop(context, true);
+              Navigator.pop(context, '削除');
             },
           ),
         ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
-import 'package:team14/views/create_memo_page.dart';
+import 'package:team14/views/template_detail_page.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 
@@ -15,31 +17,38 @@ class SelectTemplatePage extends StatefulWidget {
 class _SelectTemplatePageState extends State<SelectTemplatePage> {
   late Future<List<MemoTemplate>> templateList;
   late MemoTemplateProvider mtp = MemoTemplateProvider();
+  late Future<SharedPreferences> prefs;
+  late int defaultTemplate;
 
   @override
   void initState() {
     super.initState();
     templateList = mtp.selectAll();
+    _getPrefItems();
   }
 
-  Future<void> onTapContent(int index) async {
-    var isCreateMemo = await showDialog(
-      context: context,
-      builder: (_) {
-        return const CreateMemoDialog();
-      },
+  // テンプレid取得
+  _getPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
+    });
+  }
+
+  // テンプレid登録
+  _setPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('defaultTemplate', defaultTemplate);
+  }
+
+  void onTapContent(MemoTemplate data) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return TemplateDetailPage(memoTemplate: data);
+        },
+      ),
     );
-    if (isCreateMemo) {
-      return Future(() {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return CreateMemoPage(templateMemoId: index);
-            },
-          ),
-        );
-      });
-    }
   }
 
   // Delete memo, update memoList
@@ -53,7 +62,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myAppBar(title: 'テンプレート選択', context: context),
+      appBar: myAppBar(title: 'テンプレート一覧', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/create_template_page');
@@ -91,23 +100,29 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                             child: ListTile(
                               onTap: () {
                                 onTapContent(
-                                    snapshot.data!.elementAt(index).id!);
+                                    snapshot.data!.elementAt(index));
                               },
                               leading: const Icon(Icons.square_outlined),
                               title: Text(snapshot.data![index].name),
                               trailing: IconButton(
                                 icon: const Icon(Icons.info_outlined),
                                 onPressed: () async {
-                                  // TODO: 編集・更新は未実装
-                                  // 削除ポップアップ
-                                  final isDelete = await showDialog(
+                                  final action = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return const DeleteDialog();
+                                      return const ActionDialog(uniqueAction: '登録',);
                                     },
                                   );
-                                  if (isDelete != null) {
-                                    deleteTemplate(snapshot.data![index].id!);
+                                  if (action != null) {
+                                    if (action == '削除'){
+                                      // 削除対象が登録済みでなければ削除OK
+                                      if (defaultTemplate != snapshot.data![index].id!){
+                                        deleteTemplate(snapshot.data![index].id!);
+                                      }
+                                    } else if (action == '登録') {
+                                      defaultTemplate = snapshot.data![index].id!;
+                                      _setPrefItems();
+                                    }
                                   } else {
                                     print('not touched delete!');
                                   }

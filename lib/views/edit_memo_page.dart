@@ -6,7 +6,9 @@ import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 
 class EditMemoPage extends StatefulWidget {
-  const EditMemoPage({Key? key}) : super(key: key);
+  final int id;
+
+  const EditMemoPage({Key? key, required this.id}) : super(key: key);
 
   @override
   State<EditMemoPage> createState() => _EditMemoPageState();
@@ -19,9 +21,7 @@ class _EditMemoPageState extends State<EditMemoPage> {
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
     // Dummy data
-    /// NOTE: Receive Memo id at screen transition.
-    const int memoId = 1;
-    Spot? spot = await sp.selectSpot(memoId);
+    Spot? spot = await sp.selectSpot(widget.id);
     if (spot == null) {
       throw StateError('[${runtimeType.toString()}] Memo id is null!');
     }
