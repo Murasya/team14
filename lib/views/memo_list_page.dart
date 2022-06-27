@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
+import 'package:team14/views/memo_detail_page.dart';
+import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
+import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
 
 class MemoListPage extends StatefulWidget {
@@ -14,7 +17,6 @@ class MemoListPage extends StatefulWidget {
 class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Spot>> memoList;
   late SpotProvider sp = SpotProvider();
-  final List<Spot> _candidateList = [];
 
   @override
   void initState() {
@@ -22,9 +24,18 @@ class _MemoListPageState extends State<MemoListPage> {
     memoList = sp.selectAll();
   }
 
-  void onTapContent() {
-    // TODO
-    // メモ詳細に遷移
+  Future<void> onTapContent(Spot spot) async {
+    MemoTemplateProvider mtp = MemoTemplateProvider();
+    MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
+    Future(() {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return MemoDetailPage(memoTemplate: mt, spot: spot);
+          },
+        ),
+      );
+    });
   }
 
   // Delete memo, update memoList
@@ -35,32 +46,13 @@ class _MemoListPageState extends State<MemoListPage> {
     });
   }
 
-  // memo search
-  void resetListView() {
-    setState((){
-      memoList = sp.selectAll();
-    });
-  }
-
-
-  void search(String text) {
-    setState(() {
-      if (text
-          .trim()
-          .isNotEmpty) {
-        var resultList = _candidateList.where((element) => element.title.contains(text)).toList();
-        memoList = Future<List<Spot>>.value(resultList);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(title: 'メモ一覧', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO
+          // FIXME: メモテンプレートのIDが保存されていないので，遷移不可能
           // メモ作成画面に遷移
         },
         child: const Icon(Icons.add),
@@ -70,74 +62,62 @@ class _MemoListPageState extends State<MemoListPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-        Expanded(
-        child: FutureBuilder(
-        future: memoList,
-          builder: (BuildContext context,
-              AsyncSnapshot<List<Spot>> snapshot,) {
-            if (snapshot.hasData == false) {
-              return const Center(
-                child: Text('メモがありません'),
-              );
-            } else {
-              // DBにデータがある場合
-              if (snapshot.data!.isNotEmpty) {
-                // 検索用
-                for (var data in snapshot.data!){
-                  _candidateList.add(data);
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        onTap: onTapContent,
-                        leading: const Icon(Icons.description),
-                        title: Text(snapshot.data![index].title),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.info_outlined),
-                          onPressed: () async {
-                            // 削除ポップアップ
-                            final isDelete = await showDialog(
-                              context: context,
-                              builder: (_) {
-                                return const DeleteDialog();
-                              },
-                            );
-                            if (isDelete != null) {
-                              deleteMemo(snapshot.data![index].id!);
-                            }
-                          },
-                        ),
-                      ),
+            Expanded(
+              child: FutureBuilder(
+                future: memoList,
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<List<Spot>> snapshot,
+                ) {
+                  if (snapshot.hasData == false) {
+                    return const Center(
+                      child: Text('メモがありません'),
                     );
-                  },
-                );
-              } else {
-                return const Center(
-                  child: Text('メモがまだ作成されていません'),
-                );
-              }
-            }
-          },
+                  } else {
+                    // DBにデータがある場合
+                    if (snapshot.data!.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              onTap: () {
+                                onTapContent(snapshot.data!.elementAt(index));
+                              },
+                              leading: const Icon(Icons.description),
+                              title: Text(snapshot.data![index].title),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.info_outlined),
+                                onPressed: () async {
+                                  // 削除ポップアップ
+                                  final isDelete = await showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return const DeleteDialog();
+                                    },
+                                  );
+                                  if (isDelete != null) {
+                                    deleteMemo(snapshot.data![index].id!);
+                                  }
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(
+                        child: Text('メモがまだ作成されていません'),
+                      );
+                    }
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
-      TextField(
-        onChanged: (value){
-          search(value);
-        },
-        decoration: InputDecoration(
-          suffixIcon: IconButton(
-            icon: Icon(Icons.cancel,),
-            onPressed: () {
-              resetListView();
-            },
-          ),
-        ),
-        ],
-      ),
-    ),
-    drawer: myDrawer(context),
+      drawer: myDrawer(context),
     );
-    }
+  }
 }

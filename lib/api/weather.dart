@@ -7,8 +7,8 @@ class Weather {
   // observation or forecast
   final String type;
 
-  // YYYYMMDDHHMI format
-  final String date;
+  // DateTime format
+  final DateTime date;
 
   // [mm/h]
   final double rainfall;
@@ -29,10 +29,11 @@ class WeatherResponse {
 
   // toString
   @override
-  String toString(){
+  String toString() {
     var str = '';
     for (var weather in weatherList) {
-      str += 'Type:${weather.type}, Date:${weather.date}, Rainfall:${weather.rainfall}\n';
+      str +=
+          'Type:${weather.type}, Date:${weather.date}, Rainfall:${weather.rainfall}\n';
     }
     return str;
   }
@@ -40,11 +41,12 @@ class WeatherResponse {
   // from response
   factory WeatherResponse.fromJson(Map<String, dynamic> json) {
     List<Weather> weatherList = [];
-    List<dynamic> listJson = json['Feature'][0]['Property']['WeatherList']['Weather'];
-    for(var weatherJson in listJson){
+    List<dynamic> listJson =
+        json['Feature'][0]['Property']['WeatherList']['Weather'];
+    for (var weatherJson in listJson) {
       var weather = Weather(
         type: weatherJson['Type'],
-        date: weatherJson['Date'],
+        date: _toDateTime(weatherJson['Date']),
         rainfall: weatherJson['Rainfall'],
       );
       weatherList.add(weather);
@@ -53,6 +55,23 @@ class WeatherResponse {
   }
 }
 
+DateTime _toDateTime(String timeStr) {
+  try {
+    final int year = int.parse(timeStr.substring(0, 4));
+    final int month = int.parse(timeStr.substring(4, 6));
+    final int day = int.parse(timeStr.substring(6, 8));
+    final int hour = int.parse(timeStr.substring(8, 10));
+    final int minute = int.parse(timeStr.substring(10, 12));
+
+    return DateTime(year, month, day, hour, minute);
+  } on RangeError catch (e) {
+    throw Exception('[RangeError] ${e.message}');
+  } on FormatException catch (e) {
+    throw Exception('[FormatException] ${e.message}');
+  } catch (e) {
+    throw Exception(e);
+  }
+}
 
 // get weather
 Future<WeatherResponse> getWeather({
@@ -78,7 +97,8 @@ Future<WeatherResponse> getWeather({
   // get response
   var response = await http.get(url);
   // convert response to List of weather
-  var weatherResponse = WeatherResponse.fromJson(convert.jsonDecode(response.body));
+  var weatherResponse =
+      WeatherResponse.fromJson(convert.jsonDecode(response.body));
 
   if (response.statusCode == 200) {
     return Future<WeatherResponse>.value(weatherResponse);

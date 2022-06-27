@@ -53,20 +53,18 @@ Widget myDrawer(BuildContext context) {
               fontSize: 24,
             ),
           ),
-        ),onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                // TODO: Change the code to move to the memo list.
-                // (This is dummy class.)
-                return const MemoDetailPage();
-              },
-            ),
-          );
-        },
+        ),
         ListTile(
           title: const Text('メモ一覧'),
-
+          onTap: () {
+            Navigator.pushNamed(context, '/memo_list_page');
+          },
+        ),
+        ListTile(
+          title: const Text('テンプレート一覧'),
+          onTap: () {
+            Navigator.pushNamed(context, '/select_template_page');
+          },
         ),
       ],
     ),

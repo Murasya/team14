@@ -54,7 +54,7 @@ class SpotProvider {
     final filePath = '${directory.path}/$fileName';
     var file = File(filePath);
     String fileContents =
-        '$spotColumnId, $spotColumnTitle, $spotColumnTemperature, $spotColumnGpsLatitude, $spotColumnGpsLongitude, $spotColumnMemoTemplateId, $spotColumnTextBox, $spotColumnMultipleSelectList, $spotColumnSingleSelect, $spotColumnCreatedAt, $spotColumnUpdatedAt\n';
+        '$spotColumnId, $spotColumnTitle, $spotColumnWeatherObsDate, $spotColumnRainfallList, $spotColumnGpsLatitude, $spotColumnGpsLongitude, $spotColumnMemoTemplateId, $spotColumnTextBox, $spotColumnMultipleSelectList, $spotColumnSingleSelect, $spotColumnCreatedAt, $spotColumnUpdatedAt\n';
     await selectAll().then((spots) => fileContents += spots.join('\n'));
     await file.writeAsString(fileContents);
     Share.shareFiles([filePath]);
