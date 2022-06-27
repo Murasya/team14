@@ -354,6 +354,30 @@ class NamingTemplate extends StatefulWidget {
 
 class _NamingTemplateState extends State<NamingTemplate> {
   var templateNameController = TextEditingController();
+  // テンプレid
+  late SharedPreferences prefs;
+  late int defaultTemplate;
+  late int insertedId;
+
+  // テンプレid取得
+  _getPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
+    });
+  }
+
+  // テンプレid登録
+  _setPrefItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('defaultTemplate', defaultTemplate);
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    _getPrefItems();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -364,10 +388,6 @@ class _NamingTemplateState extends State<NamingTemplate> {
     // var textMemo = widget.isTextField ? 'yes' : 'no'; // Not used
     Set<String> multipleSelectList = {};
     Set<String> singleSelectList = {};
-
-    // テンプレid
-    late SharedPreferences prefs;
-    late int defaultTemplate;
 
     if (widget.checkBoxValue != null) {
       // 値の取得
@@ -399,19 +419,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
       singleSelectList.addAll(tempPullDownList.toSet());
     }
 
-    // テンプレid取得
-    _getPrefItems() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
-      });
-    }
 
-    // テンプレid登録
-    _setPrefItems() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('defaultTemplate', defaultTemplate);
-    }
 
     Future<void> onSubmit() async {
       // テンプレート作成完了、テンプレート一覧に遷移
@@ -427,11 +435,15 @@ class _NamingTemplateState extends State<NamingTemplate> {
           singleSelectList,
         );
         try {
-          await MemoTemplateProvider().insert(memoTemplate);
+          insertedId = await MemoTemplateProvider().insert(memoTemplate);
         } on DatabaseException catch (_) {
           Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
         }
         Future(() {
+          if (defaultTemplate == -999){
+            defaultTemplate = insertedId;
+            _setPrefItems();
+          }
           Navigator.pushNamed(context, '/select_template_page');
         });
       }

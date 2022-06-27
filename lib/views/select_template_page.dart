@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
@@ -54,7 +55,17 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   // Delete memo, update memoList
   void deleteTemplate(int id) {
     setState(() {
-      mtp.delete(id);
+      try {
+        mtp.delete(id);
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return const WarningDialog(
+                text: 'このテンプレートはメモで使われています',
+              );
+            });
+      }
       templateList = mtp.selectAll();
     });
   }
@@ -99,8 +110,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                           return Card(
                             child: ListTile(
                               onTap: () {
-                                onTapContent(
-                                    snapshot.data!.elementAt(index));
+                                onTapContent(snapshot.data!.elementAt(index));
                               },
                               leading: const Icon(Icons.square_outlined),
                               title: Text(snapshot.data![index].name),
@@ -110,17 +120,32 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                                   final action = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return const ActionDialog(uniqueAction: '登録',);
+                                      return const ActionDialog(
+                                        uniqueAction: '登録',
+                                      );
                                     },
                                   );
                                   if (action != null) {
-                                    if (action == '削除'){
+                                    if (action == '削除') {
                                       // 削除対象が登録済みでなければ削除OK
-                                      if (defaultTemplate != snapshot.data![index].id!){
-                                        deleteTemplate(snapshot.data![index].id!);
+                                      if (defaultTemplate !=
+                                          snapshot.data![index].id!) {
+                                        try {
+                                          deleteTemplate(
+                                              snapshot.data![index].id!);
+                                        } on DatabaseException catch (e) {}
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) {
+                                              return const WarningDialog(
+                                                text: 'このテンプレートはデフォルトに登録されています',
+                                              );
+                                            });
                                       }
                                     } else if (action == '登録') {
-                                      defaultTemplate = snapshot.data![index].id!;
+                                      defaultTemplate =
+                                          snapshot.data![index].id!;
                                       _setPrefItems();
                                     }
                                   } else {
@@ -145,40 +170,6 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
         ),
       ),
       drawer: myDrawer(context),
-    );
-  }
-}
-
-// メモ作成ダイアログ
-class CreateMemoDialog extends StatelessWidget {
-  const CreateMemoDialog({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('このテンプレートでメモを作成しますか？'),
-      actions: <Widget>[
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text('いいえ'),
-          ),
-          onTap: () {
-            Navigator.pop(context, false);
-          },
-        ),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text('はい'),
-          ),
-          onTap: () {
-            Navigator.pop(context, true);
-          },
-        ),
-      ],
     );
   }
 }

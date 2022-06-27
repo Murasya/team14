@@ -40,7 +40,7 @@ class _MemoListPageState extends State<MemoListPage> {
     });
   }
 
-  Future<void> onTapContent(Spot spot) async {
+  Future<void> onTapContent({required Spot spot, required context}) async {
     MemoTemplateProvider mtp = MemoTemplateProvider();
     MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
     Future(() {
@@ -69,7 +69,7 @@ class _MemoListPageState extends State<MemoListPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // メモ作成画面に遷移
-          if (defaultTemplate != -999){
+          if (defaultTemplate != -999) {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
@@ -108,7 +108,7 @@ class _MemoListPageState extends State<MemoListPage> {
                           return Card(
                             child: ListTile(
                               onTap: () {
-                                onTapContent(snapshot.data!.elementAt(index));
+                                onTapContent(spot: snapshot.data!.elementAt(index), context: context);
                               },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),
@@ -119,12 +119,14 @@ class _MemoListPageState extends State<MemoListPage> {
                                   final action = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return const ActionDialog(uniqueAction: '編集',);
+                                      return const ActionDialog(
+                                        uniqueAction: '編集',
+                                      );
                                     },
                                   );
                                   if (action != null) {
                                     // is削除
-                                    if (action == '削除'){
+                                    if (action == '削除') {
                                       deleteMemo(snapshot.data![index].id!);
                                     } else if (action == '編集') {
                                       // is編集
@@ -132,7 +134,8 @@ class _MemoListPageState extends State<MemoListPage> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return EditMemoPage(id: snapshot.data![index].id!);
+                                            return EditMemoPage(
+                                                id: snapshot.data![index].id!);
                                           },
                                         ),
                                       );

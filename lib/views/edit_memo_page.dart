@@ -43,6 +43,8 @@ class _EditMemoPageState extends State<EditMemoPage> {
     // have already been updated in the previous process.
     spot.updatedAt = DateTime.now();
     await sp.update(spot);
+    if (!mounted) return;
+    Navigator.pop(context, 'edit_complete');
   }
 
   @override
