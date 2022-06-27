@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
+import 'package:team14/views/memo_detail_page.dart';
+import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
+import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
 
 class MemoListPage extends StatefulWidget {
@@ -21,9 +24,18 @@ class _MemoListPageState extends State<MemoListPage> {
     memoList = sp.selectAll();
   }
 
-  void onTapContent() {
-    // TODO
-    // メモ詳細に遷移
+  Future<void> onTapContent(Spot spot) async {
+    MemoTemplateProvider mtp = MemoTemplateProvider();
+    MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
+    Future(() {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return MemoDetailPage(memoTemplate: mt, spot: spot);
+          },
+        ),
+      );
+    });
   }
 
   // Delete memo, update memoList
@@ -40,7 +52,7 @@ class _MemoListPageState extends State<MemoListPage> {
       appBar: myAppBar(title: 'メモ一覧', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO
+          // FIXME: メモテンプレートのIDが保存されていないので，遷移不可能
           // メモ作成画面に遷移
         },
         child: const Icon(Icons.add),
@@ -69,7 +81,9 @@ class _MemoListPageState extends State<MemoListPage> {
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              onTap: onTapContent,
+                              onTap: () {
+                                onTapContent(snapshot.data!.elementAt(index));
+                              },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),
                               trailing: IconButton(

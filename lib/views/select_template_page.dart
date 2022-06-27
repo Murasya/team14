@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
+import 'package:team14/views/create_memo_page.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 
@@ -21,7 +22,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     templateList = mtp.selectAll();
   }
 
-  Future<void> onTapContent() async {
+  Future<void> onTapContent(int index) async {
     var isCreateMemo = await showDialog(
       context: context,
       builder: (_) {
@@ -29,8 +30,15 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
       },
     );
     if (isCreateMemo) {
-      // TODO
-      // メモ作成画面に遷移
+      return Future(() {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return CreateMemoPage(templateMemoId: index);
+            },
+          ),
+        );
+      });
     }
   }
 
@@ -48,8 +56,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
       appBar: myAppBar(title: 'テンプレート選択', context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO
-          // メモテンプレ作成画面に遷移
+          Navigator.pushNamed(context, '/create_template_page');
         },
         child: const Icon(Icons.add),
       ),
@@ -65,19 +72,27 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                   BuildContext context,
                   AsyncSnapshot<List<MemoTemplate>> snapshot,
                 ) {
-                  if (snapshot.hasData == false) {
-                    return const Center(
-                      child: Text('テンプレートがありません'),
-                    );
+                  if (snapshot.data == null) {
+                    // Fetching data from DB.
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.data!.isEmpty) {
+                    // Nothing Template.
+                    Future(() {
+                      Navigator.pushNamed(context, '/create_template_page');
+                    });
+                    return const Center(child: CircularProgressIndicator());
                   } else {
-                    // DBにデータがある場合
+                    // Found Template.
                     if (snapshot.data!.isNotEmpty) {
                       return ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return Card(
                             child: ListTile(
-                              onTap: onTapContent,
+                              onTap: () {
+                                onTapContent(
+                                    snapshot.data!.elementAt(index).id!);
+                              },
                               leading: const Icon(Icons.square_outlined),
                               title: Text(snapshot.data![index].name),
                               trailing: IconButton(

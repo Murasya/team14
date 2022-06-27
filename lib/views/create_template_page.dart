@@ -411,8 +411,9 @@ class _NamingTemplateState extends State<NamingTemplate> {
         } on DatabaseException catch (_) {
           Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
         }
-        // TODO
-        // メモ一覧に遷移
+        Future(() {
+          Navigator.pushNamed(context, '/select_template_page');
+        });
       }
     }
 

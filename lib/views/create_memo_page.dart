@@ -8,7 +8,12 @@ import 'package:team14/models/spot.dart';
 import 'package:team14/api/weather.dart';
 
 class CreateMemoPage extends StatefulWidget {
-  const CreateMemoPage({Key? key}) : super(key: key);
+  final int templateMemoId;
+
+  const CreateMemoPage({
+    Key? key,
+    required this.templateMemoId,
+  }) : super(key: key);
 
   @override
   State<CreateMemoPage> createState() => _CreateMemoPageState();
@@ -20,11 +25,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   final defaultSpotTitle = 'Memo';
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
-    // Dummy data
-    /// NOTE: Receive Memo template id at screen transition.
-    const int templateMemoId = 1;
-
-    MemoTemplate? mt = await mtp.selectMemoTemplate(templateMemoId);
+    MemoTemplate? mt = await mtp.selectMemoTemplate(widget.templateMemoId);
     if (mt == null) {
       throw StateError('[${runtimeType.toString()}] Memo template id is null!');
     }
@@ -85,6 +86,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       spot.createdAt = spot.updatedAt = DateTime.now();
 
       await sp.insert(spot);
+      Future(() {
+        Navigator.pushNamed(context, '/memo_list_page');
+      });
     } on Exception catch (e) {
       throw Exception('$e');
     }
