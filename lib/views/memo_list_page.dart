@@ -108,7 +108,9 @@ class _MemoListPageState extends State<MemoListPage> {
                           return Card(
                             child: ListTile(
                               onTap: () {
-                                onTapContent(spot: snapshot.data!.elementAt(index), context: context);
+                                onTapContent(
+                                    spot: snapshot.data!.elementAt(index),
+                                    context: context);
                               },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),

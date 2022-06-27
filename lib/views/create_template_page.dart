@@ -40,7 +40,6 @@ class _CreateTemplatePageState extends State<CreateTemplatePage> {
   }
 }
 
-
 // 要素選択画面
 class ElementChoicePage extends StatefulWidget {
   const ElementChoicePage({Key? key}) : super(key: key);
@@ -354,6 +353,7 @@ class NamingTemplate extends StatefulWidget {
 
 class _NamingTemplateState extends State<NamingTemplate> {
   var templateNameController = TextEditingController();
+
   // テンプレid
   late SharedPreferences prefs;
   late int defaultTemplate;
@@ -374,7 +374,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _getPrefItems();
   }
@@ -419,8 +419,6 @@ class _NamingTemplateState extends State<NamingTemplate> {
       singleSelectList.addAll(tempPullDownList.toSet());
     }
 
-
-
     Future<void> onSubmit() async {
       // テンプレート作成完了、テンプレート一覧に遷移
       var templateName = templateNameController.value.text;
@@ -440,7 +438,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
           Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
         }
         Future(() {
-          if (defaultTemplate == -999){
+          if (defaultTemplate == -999) {
             defaultTemplate = insertedId;
             _setPrefItems();
           }

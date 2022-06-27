@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 // Delete Dialog
 class ActionDialog extends StatefulWidget {
-  const ActionDialog({Key? key, required String this.uniqueAction}) : super(key: key);
+  const ActionDialog({Key? key, required String this.uniqueAction})
+      : super(key: key);
 
   final String uniqueAction;
 
@@ -38,7 +39,6 @@ class _ActionDialogState extends State<ActionDialog> {
     );
   }
 }
-
 
 // アラートダイアログ
 class WarningDialog extends StatefulWidget {
