@@ -4,8 +4,10 @@ import 'package:team14/views/detail_helper.dart';
 import 'package:team14/models/memoTemplate.dart';
 
 class TemplateDetailPage extends StatefulWidget {
-  const TemplateDetailPage({Key? key, required this.memoTemplate})
-      : super(key: key);
+  const TemplateDetailPage({
+    Key? key,
+    required this.memoTemplate,
+  }) : super(key: key);
 
   final String title = 'テンプレート詳細';
 
