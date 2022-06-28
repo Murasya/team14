@@ -354,9 +354,6 @@ class NamingTemplate extends StatefulWidget {
 }
 
 class _NamingTemplateState extends State<NamingTemplate> {
-  // テンプレid
-  DefaultTemplateProvider dtp = DefaultTemplateProvider();
-
   @override
   Widget build(BuildContext context) {
     // 入力されたテキストの確認用デバッグ変数
@@ -401,6 +398,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
 
     Future<void> onSubmit() async {
       // defaultTemplate用
+      DefaultTemplateProvider dtp = DefaultTemplateProvider();
       late int insertedId;
       var defaultTemplate = await dtp.getDefaultTemplateId();
 
