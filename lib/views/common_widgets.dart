@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/memoProvider.dart';
 
 PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
@@ -29,9 +29,9 @@ PreferredSizeWidget myAppBar({required title, required context}) {
           ),
         ];
       }, onSelected: (value) async {
-        SpotProvider sp = SpotProvider();
+        MemoProvider mp = MemoProvider();
         if (value == 0) {
-          await sp.shareAsCsvFromDB();
+          await mp.shareAsCsvFromDB();
         }
       }),
     ],
