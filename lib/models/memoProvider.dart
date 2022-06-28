@@ -4,49 +4,49 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dbHelper.dart';
-import 'spot.dart';
+import 'memo.dart';
 
-class SpotProvider {
+class MemoProvider {
   Future<Database> _open() async {
     return await openHelper();
   }
 
-  Future<int> insert(Spot spot) async {
+  Future<int> insert(Memo memo) async {
     final db = await _open();
-    return await db.insert(spotTableName, spot.toMap());
+    return await db.insert(memoTableName, memo.toMap());
   }
 
-  Future<Spot?> selectSpot(int id) async {
+  Future<Memo?> selectMemo(int id) async {
     final db = await _open();
     final maps = await db.query(
-      spotTableName,
-      where: '$spotColumnId = ?',
+      memoTableName,
+      where: '$memoColumnId = ?',
       whereArgs: [id],
     );
     if (maps.isEmpty) return null;
-    return Spot.fromMap(maps.first);
+    return Memo.fromMap(maps.first);
   }
 
-  Future<List<Spot>> selectAll() async {
+  Future<List<Memo>> selectAll() async {
     final db = await _open();
     final maps = await db.query(
-      spotTableName,
-      orderBy: '$spotColumnId DESC',
+      memoTableName,
+      orderBy: '$memoColumnId DESC',
     );
     if (maps.isEmpty) return [];
-    return maps.map((map) => Spot.fromMap(map)).toList();
+    return maps.map((map) => Memo.fromMap(map)).toList();
   }
 
-  Future<int> update(Spot spot) async {
+  Future<int> update(Memo memo) async {
     final db = await _open();
-    return await db.update(spotTableName, spot.toMap(),
-        where: '$spotColumnId = ?', whereArgs: [spot.id]);
+    return await db.update(memoTableName, memo.toMap(),
+        where: '$memoColumnId = ?', whereArgs: [memo.id]);
   }
 
   Future<int> delete(int id) async {
     final db = await _open();
     return await db
-        .delete(spotTableName, where: '$spotColumnId = ?', whereArgs: [id]);
+        .delete(memoTableName, where: '$memoColumnId = ?', whereArgs: [id]);
   }
 
   Future shareAsCsvFromDB({String fileName = 'latest_db.csv'}) async {
@@ -54,8 +54,8 @@ class SpotProvider {
     final filePath = '${directory.path}/$fileName';
     var file = File(filePath);
     String fileContents =
-        '$spotColumnId, $spotColumnTitle, $spotColumnWeatherObsDate, $spotColumnRainfallList, $spotColumnGpsLatitude, $spotColumnGpsLongitude, $spotColumnMemoTemplateId, $spotColumnTextBox, $spotColumnMultipleSelectList, $spotColumnSingleSelect, $spotColumnCreatedAt, $spotColumnUpdatedAt\n';
-    await selectAll().then((spots) => fileContents += spots.join('\n'));
+        '$memoColumnId, $memoColumnTitle, $memoColumnWeatherObsDate, $memoColumnRainfallList, $memoColumnGpsLatitude, $memoColumnGpsLongitude, $memoColumnMemoTemplateId, $memoColumnTextBox, $memoColumnMultipleSelectList, $memoColumnSingleSelect, $memoColumnCreatedAt, $memoColumnUpdatedAt\n';
+    await selectAll().then((memos) => fileContents += memos.join('\n'));
     await file.writeAsString(fileContents);
     Share.shareFiles([filePath]);
   }

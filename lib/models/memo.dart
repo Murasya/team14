@@ -1,6 +1,6 @@
 import 'dbHelper.dart';
 
-class Spot {
+class Memo {
   int? id;
   String title;
   DateTime weatherObsDate;
@@ -14,7 +14,7 @@ class Spot {
   DateTime createdAt;
   DateTime updatedAt;
 
-  Spot(
+  Memo(
     this.title,
     this.weatherObsDate,
     this.rainfallList,
@@ -30,51 +30,51 @@ class Spot {
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
-      spotColumnTitle: title,
-      spotColumnWeatherObsDate: weatherObsDate.toIso8601String(),
-      spotColumnRainfallList: rainfallList.join('\n'),
-      spotColumnGpsLatitude: gpsLatitude,
-      spotColumnGpsLongitude: gpsLongitude,
-      spotColumnMemoTemplateId: memoTemplateId,
-      spotColumnTextBox: textBox,
-      spotColumnMultipleSelectList: multipleSelectList
+      memoColumnTitle: title,
+      memoColumnWeatherObsDate: weatherObsDate.toIso8601String(),
+      memoColumnRainfallList: rainfallList.join('\n'),
+      memoColumnGpsLatitude: gpsLatitude,
+      memoColumnGpsLongitude: gpsLongitude,
+      memoColumnMemoTemplateId: memoTemplateId,
+      memoColumnTextBox: textBox,
+      memoColumnMultipleSelectList: multipleSelectList
           ?.map((value) => value == true ? 1 : 0)
           .toList()
           .join('\n'),
-      spotColumnSingleSelect: singleSelect,
-      spotColumnCreatedAt: createdAt.toIso8601String(),
-      spotColumnUpdatedAt: updatedAt.toIso8601String(),
+      memoColumnSingleSelect: singleSelect,
+      memoColumnCreatedAt: createdAt.toIso8601String(),
+      memoColumnUpdatedAt: updatedAt.toIso8601String(),
     };
     if (multipleSelectList != null && multipleSelectList!.isEmpty) {
-      map[spotColumnMultipleSelectList] = null;
+      map[memoColumnMultipleSelectList] = null;
     }
     return map;
   }
 
-  Spot.fromMap(Map<String, Object?> map)
-      : id = map[spotColumnId] as int,
-        title = map[spotColumnTitle] as String,
+  Memo.fromMap(Map<String, Object?> map)
+      : id = map[memoColumnId] as int,
+        title = map[memoColumnTitle] as String,
         weatherObsDate =
-            DateTime.parse(map[spotColumnWeatherObsDate] as String).toLocal(),
-        rainfallList = map[spotColumnRainfallList]
+            DateTime.parse(map[memoColumnWeatherObsDate] as String).toLocal(),
+        rainfallList = map[memoColumnRainfallList]
             .toString()
             .split('\n')
             .map((e) => double.parse(e))
             .toList(),
-        gpsLatitude = map[spotColumnGpsLatitude] as num,
-        gpsLongitude = map[spotColumnGpsLongitude] as num,
-        memoTemplateId = map[spotColumnMemoTemplateId] as int,
-        textBox = map[spotColumnTextBox] as String?,
-        multipleSelectList = map[spotColumnMultipleSelectList]
+        gpsLatitude = map[memoColumnGpsLatitude] as num,
+        gpsLongitude = map[memoColumnGpsLongitude] as num,
+        memoTemplateId = map[memoColumnMemoTemplateId] as int,
+        textBox = map[memoColumnTextBox] as String?,
+        multipleSelectList = map[memoColumnMultipleSelectList]
             ?.toString()
             .split('\n')
             .map((value) => value == '1' ? true : false)
             .toList(),
-        singleSelect = map[spotColumnSingleSelect] as int?,
+        singleSelect = map[memoColumnSingleSelect] as int?,
         createdAt =
-            DateTime.parse(map[spotColumnCreatedAt] as String).toLocal(),
+            DateTime.parse(map[memoColumnCreatedAt] as String).toLocal(),
         updatedAt =
-            DateTime.parse(map[spotColumnUpdatedAt] as String).toLocal();
+            DateTime.parse(map[memoColumnUpdatedAt] as String).toLocal();
 
   @override
   String toString() =>
