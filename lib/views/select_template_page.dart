@@ -59,7 +59,8 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     }, (e, s) {
       print('[Error] $e');
 
-      String errorMsg = errorCode == 1 ? warningDialogMap[1]! : warningDialogMap[2]!;
+      String errorMsg =
+          errorCode == 1 ? warningDialogMap[1]! : warningDialogMap[2]!;
       showDialog(
         context: context,
         builder: (_) {
