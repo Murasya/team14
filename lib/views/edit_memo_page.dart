@@ -8,7 +8,10 @@ import 'package:team14/models/spot.dart';
 class EditMemoPage extends StatefulWidget {
   final int id;
 
-  const EditMemoPage({Key? key, required this.id}) : super(key: key);
+  const EditMemoPage({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<EditMemoPage> createState() => _EditMemoPageState();
@@ -20,7 +23,6 @@ class _EditMemoPageState extends State<EditMemoPage> {
   final defaultSpotTitle = 'Memo';
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
-    // Dummy data
     Spot? spot = await sp.selectSpot(widget.id);
     if (spot == null) {
       throw StateError('[${runtimeType.toString()}] Memo id is null!');
@@ -43,8 +45,9 @@ class _EditMemoPageState extends State<EditMemoPage> {
     // have already been updated in the previous process.
     spot.updatedAt = DateTime.now();
     await sp.update(spot);
-    if (!mounted) return;
-    Navigator.pop(context, 'edit_complete');
+    Future(() {
+      Navigator.pushNamed(context, '/memo_list_page');
+    });
   }
 
   @override

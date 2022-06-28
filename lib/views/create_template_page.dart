@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
 
 // debug class
 class CreateTemplateDebug extends StatelessWidget {
@@ -355,29 +355,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
   var templateNameController = TextEditingController();
 
   // テンプレid
-  late SharedPreferences prefs;
-  late int defaultTemplate;
-  late int insertedId;
-
-  // テンプレid取得
-  _getPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
-    });
-  }
-
-  // テンプレid登録
-  _setPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('defaultTemplate', defaultTemplate);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getPrefItems();
-  }
+  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -420,6 +398,10 @@ class _NamingTemplateState extends State<NamingTemplate> {
     }
 
     Future<void> onSubmit() async {
+      // defaultTemplate用
+      late int insertedId;
+      var defaultTemplate = await dtp.getDefaultTemplateId();
+
       // テンプレート作成完了、テンプレート一覧に遷移
       var templateName = templateNameController.value.text;
       if (templateName == '') {
@@ -437,11 +419,9 @@ class _NamingTemplateState extends State<NamingTemplate> {
         } on DatabaseException catch (_) {
           Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
         }
+        defaultTemplate ??= insertedId;
+        await dtp.setDefaultTemplateId(id: defaultTemplate);
         Future(() {
-          if (defaultTemplate == -999) {
-            defaultTemplate = insertedId;
-            _setPrefItems();
-          }
           Navigator.pushNamed(context, '/select_template_page');
         });
       }

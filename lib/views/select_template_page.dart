@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
 import 'package:team14/views/template_detail_page.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
 
 class SelectTemplatePage extends StatefulWidget {
   const SelectTemplatePage({Key? key}) : super(key: key);
@@ -18,28 +19,14 @@ class SelectTemplatePage extends StatefulWidget {
 class _SelectTemplatePageState extends State<SelectTemplatePage> {
   late Future<List<MemoTemplate>> templateList;
   late MemoTemplateProvider mtp = MemoTemplateProvider();
-  late Future<SharedPreferences> prefs;
-  late int defaultTemplate;
+
+  // テンプレid
+  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   void initState() {
     super.initState();
     templateList = mtp.selectAll();
-    _getPrefItems();
-  }
-
-  // テンプレid取得
-  _getPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
-    });
-  }
-
-  // テンプレid登録
-  _setPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('defaultTemplate', defaultTemplate);
   }
 
   void onTapContent(MemoTemplate data) {
@@ -53,20 +40,35 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   }
 
   // Delete memo, update memoList
-  void deleteTemplate(int id) {
-    setState(() {
-      try {
-        mtp.delete(id);
-      } catch (e) {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return const WarningDialog(
-                text: 'このテンプレートはメモで使われています',
-              );
-            });
+  Future<void> _deleteTemplate(int id) async {
+    Map<int, String> warningDialogMap = {
+      1: 'このテンプレートはデフォルトに登録されています',
+      2: 'このテンプレートはメモで使われています',
+    };
+    int errorCode = 0;
+    runZonedGuarded(() async {
+      var defaultTemplate = await dtp.getDefaultTemplateId();
+      if (id == defaultTemplate) {
+        errorCode = 1;
+        throw 'This template is registered as default';
       }
-      templateList = mtp.selectAll();
+      await mtp.delete(id);
+      setState(() {
+        templateList = mtp.selectAll();
+      });
+    }, (e, s) {
+      print('[Error] $e');
+
+      String errorMsg =
+      errorCode == 1 ? warningDialogMap[1]! : warningDialogMap[2]!;
+      showDialog(
+        context: context,
+        builder: (_) {
+          return WarningDialog(
+            text: errorMsg,
+          );
+        },
+      );
     });
   }
 
@@ -126,27 +128,16 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                                     },
                                   );
                                   if (action != null) {
+                                    var defaultTemplate =
+                                        await dtp.getDefaultTemplateId();
                                     if (action == '削除') {
                                       // 削除対象が登録済みでなければ削除OK
-                                      if (defaultTemplate !=
-                                          snapshot.data![index].id!) {
-                                        try {
-                                          deleteTemplate(
-                                              snapshot.data![index].id!);
-                                        } on DatabaseException catch (e) {}
-                                      } else {
-                                        showDialog(
-                                            context: context,
-                                            builder: (_) {
-                                              return const WarningDialog(
-                                                text: 'このテンプレートはデフォルトに登録されています',
-                                              );
-                                            });
-                                      }
+                                      _deleteTemplate(snapshot.data![index].id!);
                                     } else if (action == '登録') {
                                       defaultTemplate =
                                           snapshot.data![index].id!;
-                                      _setPrefItems();
+                                      dtp.setDefaultTemplateId(
+                                          id: defaultTemplate);
                                     }
                                   } else {
                                     print('not touched delete!');

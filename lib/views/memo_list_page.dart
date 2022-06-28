@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
@@ -9,6 +8,7 @@ import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
 
 import 'create_memo_page.dart';
 
@@ -22,25 +22,17 @@ class MemoListPage extends StatefulWidget {
 class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Spot>> memoList;
   late SpotProvider sp = SpotProvider();
-  late SharedPreferences prefs;
-  late int defaultTemplate;
+
+  // テンプレid
+  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   void initState() {
     super.initState();
     memoList = sp.selectAll();
-    _getPrefItems();
   }
 
-  // テンプレid取得
-  _getPrefItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      defaultTemplate = prefs.getInt('defaultTemplate') ?? -999;
-    });
-  }
-
-  Future<void> onTapContent({required Spot spot, required context}) async {
+  Future<void> onTapContent({required Spot spot}) async {
     MemoTemplateProvider mtp = MemoTemplateProvider();
     MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
     Future(() {
@@ -67,18 +59,23 @@ class _MemoListPageState extends State<MemoListPage> {
     return Scaffold(
       appBar: myAppBar(title: 'メモ一覧', context: context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           // メモ作成画面に遷移
-          if (defaultTemplate != -999) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return CreateMemoPage(templateMemoId: defaultTemplate);
-                },
-              ),
-            );
+          var defaultTemplate = await dtp.getDefaultTemplateId();
+          if (defaultTemplate != null) {
+            Future(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CreateMemoPage(templateMemoId: defaultTemplate);
+                  },
+                ),
+              );
+            });
           } else {
-            Navigator.pushNamed(context, '/create_template_page');
+            Future(() {
+              Navigator.pushNamed(context, '/create_template_page');
+            });
           }
         },
         child: const Icon(Icons.add),
@@ -109,8 +106,7 @@ class _MemoListPageState extends State<MemoListPage> {
                             child: ListTile(
                               onTap: () {
                                 onTapContent(
-                                    spot: snapshot.data!.elementAt(index),
-                                    context: context);
+                                    spot: snapshot.data!.elementAt(index));
                               },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),
