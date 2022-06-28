@@ -96,63 +96,54 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                   if (snapshot.data == null) {
                     // Fetching data from DB.
                     return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.data!.isEmpty) {
-                    // Nothing Template.
-                    Future(() {
-                      Navigator.pushNamed(context, '/create_template_page');
-                    });
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
+                  } else if (snapshot.data!.isNotEmpty) {
                     // Found Template.
-                    if (snapshot.data!.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            child: ListTile(
-                              onTap: () {
-                                onTapContent(snapshot.data!.elementAt(index));
-                              },
-                              leading: const Icon(Icons.square_outlined),
-                              title: Text(snapshot.data![index].name),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.info_outlined),
-                                onPressed: () async {
-                                  final action = await showDialog(
-                                    context: context,
-                                    builder: (_) {
-                                      return const ActionDialog(
-                                        uniqueAction: '登録',
-                                      );
-                                    },
-                                  );
-                                  if (action != null) {
-                                    var defaultTemplate =
-                                        await dtp.getDefaultTemplateId();
-                                    if (action == '削除') {
-                                      // 削除対象が登録済みでなければ削除OK
-                                      _deleteTemplate(
-                                          snapshot.data![index].id!);
-                                    } else if (action == '登録') {
-                                      defaultTemplate =
-                                          snapshot.data![index].id!;
-                                      dtp.setDefaultTemplateId(
-                                          id: defaultTemplate);
-                                    }
-                                  } else {
-                                    print('not touched delete!');
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: ListTile(
+                            onTap: () {
+                              onTapContent(snapshot.data!.elementAt(index));
+                            },
+                            leading: const Icon(Icons.square_outlined),
+                            title: Text(snapshot.data![index].name),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.info_outlined),
+                              onPressed: () async {
+                                final action = await showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return const ActionDialog(
+                                      uniqueAction: '登録',
+                                    );
+                                  },
+                                );
+                                if (action != null) {
+                                  var defaultTemplate =
+                                      await dtp.getDefaultTemplateId();
+                                  if (action == '削除') {
+                                    // 削除対象が登録済みでなければ削除OK
+                                    _deleteTemplate(snapshot.data![index].id!);
+                                  } else if (action == '登録') {
+                                    defaultTemplate = snapshot.data![index].id!;
+                                    dtp.setDefaultTemplateId(
+                                        id: defaultTemplate);
                                   }
-                                },
-                              ),
+                                } else {
+                                  print('not touched delete!');
+                                }
+                              },
                             ),
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('メモテンプレートがまだ作成されていません'),
-                      );
-                    }
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    // Nothing Template.
+                    return const Center(
+                      child: Text('メモテンプレートがまだ作成されていません'),
+                    );
                   }
                 },
               ),
