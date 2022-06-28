@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
 import 'package:team14/views/memo_detail_page.dart';
+import 'package:team14/views/edit_memo_page.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/spot.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
+
+import 'create_memo_page.dart';
 
 class MemoListPage extends StatefulWidget {
   const MemoListPage({Key? key}) : super(key: key);
@@ -18,13 +23,16 @@ class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Spot>> memoList;
   late SpotProvider sp = SpotProvider();
 
+  // テンプレid
+  DefaultTemplateProvider dtp = DefaultTemplateProvider();
+
   @override
   void initState() {
     super.initState();
     memoList = sp.selectAll();
   }
 
-  Future<void> onTapContent(Spot spot) async {
+  Future<void> onTapContent({required Spot spot}) async {
     MemoTemplateProvider mtp = MemoTemplateProvider();
     MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
     Future(() {
@@ -51,9 +59,24 @@ class _MemoListPageState extends State<MemoListPage> {
     return Scaffold(
       appBar: myAppBar(title: 'メモ一覧', context: context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // FIXME: メモテンプレートのIDが保存されていないので，遷移不可能
+        onPressed: () async {
           // メモ作成画面に遷移
+          var defaultTemplate = await dtp.getDefaultTemplateId();
+          if (defaultTemplate != null) {
+            Future(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CreateMemoPage(templateMemoId: defaultTemplate);
+                  },
+                ),
+              );
+            });
+          } else {
+            Future(() {
+              Navigator.pushNamed(context, '/create_template_page');
+            });
+          }
         },
         child: const Icon(Icons.add),
       ),
@@ -82,22 +105,41 @@ class _MemoListPageState extends State<MemoListPage> {
                           return Card(
                             child: ListTile(
                               onTap: () {
-                                onTapContent(snapshot.data!.elementAt(index));
+                                onTapContent(
+                                    spot: snapshot.data!.elementAt(index));
                               },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),
                               trailing: IconButton(
                                 icon: const Icon(Icons.info_outlined),
                                 onPressed: () async {
-                                  // 削除ポップアップ
-                                  final isDelete = await showDialog(
+                                  // アクションポップアップ
+                                  final action = await showDialog(
                                     context: context,
                                     builder: (_) {
-                                      return const DeleteDialog();
+                                      return const ActionDialog(
+                                        uniqueAction: '編集',
+                                      );
                                     },
                                   );
-                                  if (isDelete != null) {
-                                    deleteMemo(snapshot.data![index].id!);
+                                  if (action != null) {
+                                    // is削除
+                                    if (action == '削除') {
+                                      deleteMemo(snapshot.data![index].id!);
+                                    } else if (action == '編集') {
+                                      // is編集
+                                      if (!mounted) return;
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return EditMemoPage(
+                                                id: snapshot.data![index].id!);
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    print('not touched delete!');
                                   }
                                 },
                               ),
