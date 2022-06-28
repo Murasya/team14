@@ -24,7 +24,7 @@ class _MemoListPageState extends State<MemoListPage> {
   late SpotProvider sp = SpotProvider();
 
   // テンプレid
-  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
+  DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   void initState() {

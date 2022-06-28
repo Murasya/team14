@@ -162,9 +162,11 @@ class CreateCheckBox extends StatefulWidget {
 
   final String title = 'テンプレート作成';
 
-  const CreateCheckBox(
-      {Key? key, required this.isTextField, required this.isPullDown})
-      : super(key: key);
+  const CreateCheckBox({
+    Key? key,
+    required this.isTextField,
+    required this.isPullDown,
+  }) : super(key: key);
 
   @override
   State<CreateCheckBox> createState() => _CreateCheckBoxState();
@@ -352,10 +354,8 @@ class NamingTemplate extends StatefulWidget {
 }
 
 class _NamingTemplateState extends State<NamingTemplate> {
-  var templateNameController = TextEditingController();
-
   // テンプレid
-  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
+  DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -366,6 +366,8 @@ class _NamingTemplateState extends State<NamingTemplate> {
     // var textMemo = widget.isTextField ? 'yes' : 'no'; // Not used
     Set<String> multipleSelectList = {};
     Set<String> singleSelectList = {};
+
+    var templateNameController = TextEditingController();
 
     if (widget.checkBoxValue != null) {
       // 値の取得

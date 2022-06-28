@@ -21,7 +21,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
   late MemoTemplateProvider mtp = MemoTemplateProvider();
 
   // テンプレid
-  late DefaultTemplateProvider dtp = DefaultTemplateProvider();
+  DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   void initState() {
@@ -59,8 +59,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     }, (e, s) {
       print('[Error] $e');
 
-      String errorMsg =
-      errorCode == 1 ? warningDialogMap[1]! : warningDialogMap[2]!;
+      String errorMsg = errorCode == 1 ? warningDialogMap[1]! : warningDialogMap[2]!;
       showDialog(
         context: context,
         builder: (_) {
@@ -132,7 +131,8 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                                         await dtp.getDefaultTemplateId();
                                     if (action == '削除') {
                                       // 削除対象が登録済みでなければ削除OK
-                                      _deleteTemplate(snapshot.data![index].id!);
+                                      _deleteTemplate(
+                                          snapshot.data![index].id!);
                                     } else if (action == '登録') {
                                       defaultTemplate =
                                           snapshot.data![index].id!;
