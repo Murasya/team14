@@ -16,11 +16,14 @@ class MemoTemplate {
   );
 
   Map<String, Object?> toMap() {
-    var map = <String, Object>{
+    String? msl, ssl;
+    if (multipleSelectList.isNotEmpty) msl = multipleSelectList.join('\n');
+    if (singleSelectList.isNotEmpty) ssl = singleSelectList.join('\n');
+    var map = <String, Object?>{
       memoTemplateColumnName: name,
       memoTemplateColumnTextBox: textBox == true ? 1 : 0,
-      memoTemplateColumnMultipleSelectList: multipleSelectList.join('\n'),
-      memoTemplateColumnSingleSelectList: singleSelectList.join('\n'),
+      memoTemplateColumnMultipleSelectList: msl,
+      memoTemplateColumnSingleSelectList: ssl,
     };
     return map;
   }
@@ -29,14 +32,22 @@ class MemoTemplate {
       : id = map[memoTemplateColumnId] as int,
         name = map[memoTemplateColumnName] as String,
         textBox = map[memoTemplateColumnTextBox] == 1,
-        multipleSelectList = map[memoTemplateColumnMultipleSelectList]
-            .toString()
-            .split('\n')
-            .toSet(),
-        singleSelectList = map[memoTemplateColumnSingleSelectList]
-            .toString()
-            .split('\n')
-            .toSet();
+        multipleSelectList = {},
+        singleSelectList = {} {
+    if (map[memoTemplateColumnMultipleSelectList] != null) {
+      multipleSelectList = map[memoTemplateColumnMultipleSelectList]
+          .toString()
+          .split('\n')
+          .toSet();
+    }
+
+    if (map[memoTemplateColumnSingleSelectList] != null) {
+      singleSelectList = map[memoTemplateColumnSingleSelectList]
+          .toString()
+          .split('\n')
+          .toSet();
+    }
+  }
 
   @override
   String toString() =>
