@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
 
 // debug class
 class CreateTemplateDebug extends StatelessWidget {
@@ -161,9 +162,11 @@ class CreateCheckBox extends StatefulWidget {
 
   final String title = 'テンプレート作成';
 
-  const CreateCheckBox(
-      {Key? key, required this.isTextField, required this.isPullDown})
-      : super(key: key);
+  const CreateCheckBox({
+    Key? key,
+    required this.isTextField,
+    required this.isPullDown,
+  }) : super(key: key);
 
   @override
   State<CreateCheckBox> createState() => _CreateCheckBoxState();
@@ -351,8 +354,6 @@ class NamingTemplate extends StatefulWidget {
 }
 
 class _NamingTemplateState extends State<NamingTemplate> {
-  var templateNameController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     // 入力されたテキストの確認用デバッグ変数
@@ -362,6 +363,8 @@ class _NamingTemplateState extends State<NamingTemplate> {
     // var textMemo = widget.isTextField ? 'yes' : 'no'; // Not used
     Set<String> multipleSelectList = {};
     Set<String> singleSelectList = {};
+
+    var templateNameController = TextEditingController();
 
     if (widget.checkBoxValue != null) {
       // 値の取得
@@ -394,6 +397,11 @@ class _NamingTemplateState extends State<NamingTemplate> {
     }
 
     Future<void> onSubmit() async {
+      // defaultTemplate用
+      DefaultTemplateProvider dtp = DefaultTemplateProvider();
+      late int insertedId;
+      var defaultTemplate = await dtp.getDefaultTemplateId();
+
       // テンプレート作成完了、テンプレート一覧に遷移
       var templateName = templateNameController.value.text;
       if (templateName == '') {
@@ -407,10 +415,12 @@ class _NamingTemplateState extends State<NamingTemplate> {
           singleSelectList,
         );
         try {
-          await MemoTemplateProvider().insert(memoTemplate);
+          insertedId = await MemoTemplateProvider().insert(memoTemplate);
         } on DatabaseException catch (_) {
           Fluttertoast.showToast(msg: '入力したテンプレート名はすでに使われています');
         }
+        defaultTemplate ??= insertedId;
+        await dtp.setDefaultTemplateId(id: defaultTemplate);
         Future(() {
           Navigator.pushNamed(context, '/select_template_page');
         });
