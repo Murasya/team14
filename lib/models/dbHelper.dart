@@ -39,8 +39,8 @@ create table $memoTemplateTableName (
   $memoTemplateColumnId integer primary key autoincrement,
   $memoTemplateColumnName text unique not null,
   $memoTemplateColumnTextBox integer not null,
-  $memoTemplateColumnMultipleSelectList text not null,
-  $memoTemplateColumnSingleSelectList text not null)
+  $memoTemplateColumnMultipleSelectList text,
+  $memoTemplateColumnSingleSelectList text)
 ''');
     await db.execute('''
 create table $spotTableName (
