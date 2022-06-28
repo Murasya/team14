@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/spot.dart';
+import 'package:team14/models/memo.dart';
 
 class MemoFormHelper extends StatefulWidget {
   final String pageTitle;
   final Future<Map<String, dynamic>> connectDBProcessCB;
-  final String defaultSpotTitle;
+  final String defaultMemoTitle;
   final Function onSubmitToDB;
 
   const MemoFormHelper({
     Key? key,
     required this.pageTitle,
     required this.connectDBProcessCB,
-    required this.defaultSpotTitle,
+    required this.defaultMemoTitle,
     required this.onSubmitToDB,
   }) : super(key: key);
 
@@ -26,7 +26,7 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
   TextEditingController textBoxController = TextEditingController();
   late List<DropdownMenuItem<int>> dropdownList;
   late MemoTemplate mt;
-  late Spot spot;
+  late Memo memo;
   bool isInitialized = false;
 
   @override
@@ -38,9 +38,9 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
     if (isInitialized) return;
     isInitialized = true;
     mt = asyncValues['$MemoTemplate'];
-    spot = asyncValues['$Spot'];
-    titleController.text = spot.title;
-    textBoxController.text = spot.textBox ?? '';
+    memo = asyncValues['$Memo'];
+    titleController.text = memo.title;
+    textBoxController.text = memo.textBox ?? '';
 
     // Create drop down List
     int index = 1; // Corresponding to "mt.singleSelectList"'s index.
@@ -55,23 +55,23 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
   }
 
   void _onSubmit() {
-    // Update Spot data.
-    spot.title = titleController.text.isNotEmpty
+    // Update Memo data.
+    memo.title = titleController.text.isNotEmpty
         ? titleController.text
-        : widget.defaultSpotTitle;
-    if (mt.textBox) spot.textBox = textBoxController.text;
+        : widget.defaultMemoTitle;
+    if (mt.textBox) memo.textBox = textBoxController.text;
 
-    widget.onSubmitToDB(spot);
+    widget.onSubmitToDB(memo);
   }
 
   Widget _toggleItem(int idx) {
     return SwitchListTile(
       controlAffinity: ListTileControlAffinity.leading,
       title: Text(mt.multipleSelectList.elementAt(idx)),
-      value: spot.multipleSelectList!.elementAt(idx),
+      value: memo.multipleSelectList!.elementAt(idx),
       onChanged: (value) {
         setState(() {
-          spot.multipleSelectList![idx] = value;
+          memo.multipleSelectList![idx] = value;
         });
       },
     );
@@ -114,10 +114,10 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
               labelText: mt.singleSelectList.first,
             ),
             items: dropdownList,
-            value: spot.singleSelect,
+            value: memo.singleSelect,
             onChanged: (value) => {
               setState(() {
-                spot.singleSelect = value as int;
+                memo.singleSelect = value as int;
               }),
             },
           ),

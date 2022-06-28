@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/memo_form_helper.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
-import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/memoProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/spot.dart';
+import 'package:team14/models/memo.dart';
 
 class EditMemoPage extends StatefulWidget {
   final int id;
@@ -19,19 +19,19 @@ class EditMemoPage extends StatefulWidget {
 
 class _EditMemoPageState extends State<EditMemoPage> {
   MemoTemplateProvider mtp = MemoTemplateProvider();
-  SpotProvider sp = SpotProvider();
-  final defaultSpotTitle = 'Memo';
+  MemoProvider mp = MemoProvider();
+  final defaultMemoTitle = 'Memo';
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
-    Spot? spot = await sp.selectSpot(widget.id);
-    if (spot == null) {
+    Memo? memo = await mp.selectMemo(widget.id);
+    if (memo == null) {
       throw StateError('[${runtimeType.toString()}] Memo id is null!');
     }
 
     // Never null due to foreign key constraints.
-    MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
+    MemoTemplate mt = (await mtp.selectMemoTemplate(memo.memoTemplateId))!;
 
-    return {'${mt.runtimeType}': mt, '${spot.runtimeType}': spot};
+    return {'${mt.runtimeType}': mt, '${memo.runtimeType}': memo};
   }
 
   @override
@@ -40,11 +40,11 @@ class _EditMemoPageState extends State<EditMemoPage> {
     _connectDBProcess();
   }
 
-  Future<void> _onSubmit(Spot spot) async {
+  Future<void> _onSubmit(Memo memo) async {
     // The textBox, multipleSelectList, and singleSelect
     // have already been updated in the previous process.
-    spot.updatedAt = DateTime.now();
-    await sp.update(spot);
+    memo.updatedAt = DateTime.now();
+    await mp.update(memo);
     Future(() {
       Navigator.pushNamed(context, '/memo_list_page');
     });
@@ -54,7 +54,7 @@ class _EditMemoPageState extends State<EditMemoPage> {
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ編集",
-      defaultSpotTitle: defaultSpotTitle,
+      defaultMemoTitle: defaultMemoTitle,
       connectDBProcessCB: _connectDBProcess(),
       onSubmitToDB: _onSubmit,
     );
