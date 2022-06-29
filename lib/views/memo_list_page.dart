@@ -5,9 +5,9 @@ import 'package:team14/views/list_helper.dart';
 import 'package:team14/views/memo_detail_page.dart';
 import 'package:team14/views/edit_memo_page.dart';
 import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/spot.dart';
+import 'package:team14/models/memo.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
-import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/memoProvider.dart';
 import 'package:team14/models/defaultTemplateProvider.dart';
 
 import 'create_memo_page.dart';
@@ -20,8 +20,8 @@ class MemoListPage extends StatefulWidget {
 }
 
 class _MemoListPageState extends State<MemoListPage> {
-  late Future<List<Spot>> memoList;
-  late SpotProvider sp = SpotProvider();
+  late Future<List<Memo>> memoList;
+  late MemoProvider mp = MemoProvider();
 
   // テンプレid
   DefaultTemplateProvider dtp = DefaultTemplateProvider();
@@ -29,17 +29,17 @@ class _MemoListPageState extends State<MemoListPage> {
   @override
   void initState() {
     super.initState();
-    memoList = sp.selectAll();
+    memoList = mp.selectAll();
   }
 
-  Future<void> onTapContent({required Spot spot}) async {
+  Future<void> onTapContent({required Memo memo}) async {
     MemoTemplateProvider mtp = MemoTemplateProvider();
-    MemoTemplate mt = (await mtp.selectMemoTemplate(spot.memoTemplateId))!;
+    MemoTemplate mt = (await mtp.selectMemoTemplate(memo.memoTemplateId))!;
     Future(() {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
-            return MemoDetailPage(memoTemplate: mt, spot: spot);
+            return MemoDetailPage(memoTemplate: mt, memo: memo);
           },
         ),
       );
@@ -49,8 +49,8 @@ class _MemoListPageState extends State<MemoListPage> {
   // Delete memo, update memoList
   void deleteMemo(int id) {
     setState(() {
-      sp.delete(id);
-      memoList = sp.selectAll();
+      mp.delete(id);
+      memoList = mp.selectAll();
     });
   }
 
@@ -90,7 +90,7 @@ class _MemoListPageState extends State<MemoListPage> {
                 future: memoList,
                 builder: (
                   BuildContext context,
-                  AsyncSnapshot<List<Spot>> snapshot,
+                  AsyncSnapshot<List<Memo>> snapshot,
                 ) {
                   if (snapshot.hasData == false) {
                     return const Center(
@@ -106,7 +106,7 @@ class _MemoListPageState extends State<MemoListPage> {
                             child: ListTile(
                               onTap: () {
                                 onTapContent(
-                                    spot: snapshot.data!.elementAt(index));
+                                    memo: snapshot.data!.elementAt(index));
                               },
                               leading: const Icon(Icons.description),
                               title: Text(snapshot.data![index].title),

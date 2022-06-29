@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:team14/views/memo_form_helper.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
-import 'package:team14/models/spotProvider.dart';
+import 'package:team14/models/memoProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
-import 'package:team14/models/spot.dart';
+import 'package:team14/models/memo.dart';
 import 'package:team14/api/weather.dart';
 
 class CreateMemoPage extends StatefulWidget {
@@ -21,8 +21,8 @@ class CreateMemoPage extends StatefulWidget {
 
 class _CreateMemoPageState extends State<CreateMemoPage> {
   MemoTemplateProvider mtp = MemoTemplateProvider();
-  SpotProvider sp = SpotProvider();
-  final defaultSpotTitle = 'Memo';
+  MemoProvider mp = MemoProvider();
+  final defaultMemoTitle = 'Memo';
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
     MemoTemplate? mt = await mtp.selectMemoTemplate(widget.templateMemoId);
@@ -30,9 +30,9 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       throw StateError('[${runtimeType.toString()}] Memo template id is null!');
     }
 
-    // Initialize Spot
-    Spot spot = Spot(
-      defaultSpotTitle,
+    // Initialize Memo
+    Memo memo = Memo(
+      defaultMemoTitle,
       DateTime.now(),
       [],
       0.0,
@@ -47,7 +47,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
       DateTime.now(),
     );
 
-    return {'${mt.runtimeType}': mt, '${spot.runtimeType}': spot};
+    return {'${mt.runtimeType}': mt, '${memo.runtimeType}': memo};
   }
 
   @override
@@ -56,7 +56,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     _connectDBProcess();
   }
 
-  Future<void> _onSubmit(Spot spot) async {
+  Future<void> _onSubmit(Memo memo) async {
     // The textBox, multipleSelectList, and singleSelect
     // have already been updated in the previous process.
     try {
@@ -76,16 +76,16 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
         interval: 5,
       );
 
-      spot.weatherObsDate = jsonResponse.weatherList.first.date;
-      spot.rainfallList =
+      memo.weatherObsDate = jsonResponse.weatherList.first.date;
+      memo.rainfallList =
           jsonResponse.weatherList.map((e) => e.rainfall).toList();
 
-      spot.gpsLatitude = latitude;
-      spot.gpsLongitude = longitude;
+      memo.gpsLatitude = latitude;
+      memo.gpsLongitude = longitude;
 
-      spot.createdAt = spot.updatedAt = DateTime.now();
+      memo.createdAt = memo.updatedAt = DateTime.now();
 
-      await sp.insert(spot);
+      await mp.insert(memo);
       Future(() {
         Navigator.pushNamed(context, '/memo_list_page');
       });
@@ -98,7 +98,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   Widget build(BuildContext context) {
     return MemoFormHelper(
       pageTitle: "メモ作成",
-      defaultSpotTitle: defaultSpotTitle,
+      defaultMemoTitle: defaultMemoTitle,
       connectDBProcessCB: _connectDBProcess(),
       onSubmitToDB: _onSubmit,
     );
