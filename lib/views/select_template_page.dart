@@ -73,6 +73,35 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     });
   }
 
+  Color getBackGroundColor(int id) {
+    const colorPalletNum = 5;
+    late Color color;
+
+    // like pastel
+    switch (id % colorPalletNum) {
+      case 0:
+        color = const Color(0xFFFFBCA6);
+        break;
+      case 1:
+        color = const Color(0xFFFF9E9E);
+        break;
+      case 2:
+        color = const Color(0xFFFFF5CC);
+        break;
+      case 3:
+        color = const Color(0xFFFFE0AB);
+        break;
+      case 4:
+        color = const Color(0xFFEB8FA6);
+        break;
+      default:
+        print('$id is invalid!');
+        color = const Color(0xFF7F7F7F);
+        break;
+    }
+    return color;
+  }
+
   Widget memoTemplateCardWithGesture(MemoTemplate memoTemplate) {
     return GestureDetector(
       onTap: () {
@@ -84,6 +113,8 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
             msg: 'テンプレートに登録しました！', gravity: ToastGravity.TOP);
       },
       child: Card(
+        color: getBackGroundColor(memoTemplate.id!),
+        shadowColor: Colors.indigo,
         child: ListTile(
           leading: const Icon(Icons.square_outlined),
           title: Text(memoTemplate.name),
