@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/select_template_page.dart';
 import 'package:team14/views/memo_list_page.dart';
 import 'package:team14/views/create_template_page.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
+  await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/detail_helper.dart';
+import 'package:team14/views/memo_google_maps_page.dart';
 import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memo.dart';
 
@@ -48,6 +49,20 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
         ],
       ),
       drawer: myDrawer(context),
+      floatingActionButton: IconButton(
+        icon: const Icon(Icons.map),
+        onPressed: () {
+          Future(() {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return MemoGoogleMapsPage(memoTemplate: widget.memoTemplate, memo: widget.memo);
+                },
+              ),
+            );
+          });
+        },
+      ),
     );
   }
 }
