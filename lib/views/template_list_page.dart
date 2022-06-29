@@ -10,14 +10,14 @@ import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/defaultTemplateProvider.dart';
 
-class SelectTemplatePage extends StatefulWidget {
-  const SelectTemplatePage({Key? key}) : super(key: key);
+class TemplateListPage extends StatefulWidget {
+  const TemplateListPage({Key? key}) : super(key: key);
 
   @override
-  State<SelectTemplatePage> createState() => _SelectTemplatePageState();
+  State<TemplateListPage> createState() => _TemplateListPageState();
 }
 
-class _SelectTemplatePageState extends State<SelectTemplatePage> {
+class _TemplateListPageState extends State<TemplateListPage> {
   late Future<List<MemoTemplate>> templateList;
   int? defaultTemplateId;
   late MemoTemplateProvider mtp = MemoTemplateProvider();
