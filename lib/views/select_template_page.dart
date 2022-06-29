@@ -19,15 +19,24 @@ class SelectTemplatePage extends StatefulWidget {
 
 class _SelectTemplatePageState extends State<SelectTemplatePage> {
   late Future<List<MemoTemplate>> templateList;
+  int? defaultTemplateId;
   late MemoTemplateProvider mtp = MemoTemplateProvider();
 
   // テンプレid
   DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
+  Future<List<MemoTemplate>> initProcess() async {
+    // fetch default template id and memo template data.
+    defaultTemplateId = await dtp.getDefaultTemplateId();
+    templateList = mtp.selectAll();
+
+    return templateList;
+  }
+
   @override
   void initState() {
     super.initState();
-    templateList = mtp.selectAll();
+    initProcess();
   }
 
   void onTapContent(MemoTemplate data) {
@@ -37,6 +46,17 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           return TemplateDetailPage(memoTemplate: data);
         },
       ),
+    );
+  }
+
+  Future<void> _updateDefaultTemplateId(int id) async {
+    await dtp.setDefaultTemplateId(id: id);
+    setState(() {
+      defaultTemplateId = id;
+    });
+    Fluttertoast.showToast(
+      msg: 'テンプレートに登録しました！',
+      gravity: ToastGravity.TOP,
     );
   }
 
@@ -102,22 +122,37 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     return color;
   }
 
+  Widget activeCheckBoxIcon(int memoTemplateId) {
+    if (defaultTemplateId == null || defaultTemplateId != memoTemplateId) {
+      return const Icon(Icons.square_outlined);
+    } else {
+      return const Icon(Icons.check_box_outlined);
+    }
+  }
+
+  TextStyle activeTextStyle(int memoTemplateId) {
+    if (defaultTemplateId == null || defaultTemplateId != memoTemplateId) {
+      return const TextStyle(fontWeight: FontWeight.normal);
+    } else {
+      return const TextStyle(fontWeight: FontWeight.bold);
+    }
+  }
+
   Widget memoTemplateCardWithGesture(MemoTemplate memoTemplate) {
     return GestureDetector(
       onTap: () {
         onTapContent(memoTemplate);
       },
-      onLongPress: () async {
-        await dtp.setDefaultTemplateId(id: memoTemplate.id!);
-        Fluttertoast.showToast(
-            msg: 'テンプレートに登録しました！', gravity: ToastGravity.TOP);
-      },
+      onLongPress: () => _updateDefaultTemplateId(memoTemplate.id!),
       child: Card(
         color: getBackGroundColor(memoTemplate.id!),
         shadowColor: Colors.indigo,
         child: ListTile(
-          leading: const Icon(Icons.square_outlined),
-          title: Text(memoTemplate.name),
+          leading: activeCheckBoxIcon(memoTemplate.id!),
+          title: Text(
+            memoTemplate.name,
+            style: activeTextStyle(memoTemplate.id!),
+          ),
           trailing: IconButton(
             icon: const Icon(Icons.info_outlined),
             onPressed: () async {
@@ -130,13 +165,11 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                 },
               );
               if (action != null) {
-                var defaultTemplate = await dtp.getDefaultTemplateId();
                 if (action == '削除') {
                   // 削除対象が登録済みでなければ削除OK
                   _deleteTemplate(memoTemplate.id!);
                 } else if (action == '登録') {
-                  defaultTemplate = memoTemplate.id!;
-                  dtp.setDefaultTemplateId(id: defaultTemplate);
+                  await _updateDefaultTemplateId(memoTemplate.id!);
                 }
               } else {
                 print('not touched delete!');
@@ -165,7 +198,7 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
           children: [
             Expanded(
               child: FutureBuilder(
-                future: templateList,
+                future: initProcess(),
                 builder: (
                   BuildContext context,
                   AsyncSnapshot<List<MemoTemplate>> snapshot,
