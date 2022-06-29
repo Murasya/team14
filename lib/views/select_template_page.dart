@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
@@ -72,6 +73,50 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
     });
   }
 
+  Widget memoTemplateCardWithGesture(MemoTemplate memoTemplate) {
+    return GestureDetector(
+      onTap: () {
+        onTapContent(memoTemplate);
+      },
+      onLongPress: () async {
+        await dtp.setDefaultTemplateId(id: memoTemplate.id!);
+        Fluttertoast.showToast(
+            msg: 'テンプレートに登録しました！', gravity: ToastGravity.TOP);
+      },
+      child: Card(
+        child: ListTile(
+          leading: const Icon(Icons.square_outlined),
+          title: Text(memoTemplate.name),
+          trailing: IconButton(
+            icon: const Icon(Icons.info_outlined),
+            onPressed: () async {
+              final action = await showDialog(
+                context: context,
+                builder: (_) {
+                  return const ActionDialog(
+                    uniqueAction: '登録',
+                  );
+                },
+              );
+              if (action != null) {
+                var defaultTemplate = await dtp.getDefaultTemplateId();
+                if (action == '削除') {
+                  // 削除対象が登録済みでなければ削除OK
+                  _deleteTemplate(memoTemplate.id!);
+                } else if (action == '登録') {
+                  defaultTemplate = memoTemplate.id!;
+                  dtp.setDefaultTemplateId(id: defaultTemplate);
+                }
+              } else {
+                print('not touched delete!');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,46 +144,11 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.data!.isNotEmpty) {
                     // Found Template.
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            onTap: () {
-                              onTapContent(snapshot.data!.elementAt(index));
-                            },
-                            leading: const Icon(Icons.square_outlined),
-                            title: Text(snapshot.data![index].name),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.info_outlined),
-                              onPressed: () async {
-                                final action = await showDialog(
-                                  context: context,
-                                  builder: (_) {
-                                    return const ActionDialog(
-                                      uniqueAction: '登録',
-                                    );
-                                  },
-                                );
-                                if (action != null) {
-                                  var defaultTemplate =
-                                      await dtp.getDefaultTemplateId();
-                                  if (action == '削除') {
-                                    // 削除対象が登録済みでなければ削除OK
-                                    _deleteTemplate(snapshot.data![index].id!);
-                                  } else if (action == '登録') {
-                                    defaultTemplate = snapshot.data![index].id!;
-                                    dtp.setDefaultTemplateId(
-                                        id: defaultTemplate);
-                                  }
-                                } else {
-                                  print('not touched delete!');
-                                }
-                              },
-                            ),
-                          ),
-                        );
-                      },
+                    return ListView(
+                      children: [
+                        for (MemoTemplate mt in snapshot.data!)
+                          memoTemplateCardWithGesture(mt),
+                      ],
                     );
                   } else {
                     // Nothing Template.
