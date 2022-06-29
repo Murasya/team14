@@ -8,9 +8,6 @@ import 'package:team14/models/memoTemplate.dart';
 import 'package:team14/models/memo.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/memoProvider.dart';
-import 'package:team14/models/defaultTemplateProvider.dart';
-
-import 'create_memo_page.dart';
 
 class MemoListPage extends StatefulWidget {
   const MemoListPage({Key? key}) : super(key: key);
@@ -22,9 +19,6 @@ class MemoListPage extends StatefulWidget {
 class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Memo>> memoList;
   late MemoProvider mp = MemoProvider();
-
-  // テンプレid
-  DefaultTemplateProvider dtp = DefaultTemplateProvider();
 
   @override
   void initState() {
@@ -61,22 +55,9 @@ class _MemoListPageState extends State<MemoListPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // メモ作成画面に遷移
-          var defaultTemplate = await dtp.getDefaultTemplateId();
-          if (defaultTemplate != null) {
-            Future(() {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return CreateMemoPage(templateMemoId: defaultTemplate);
-                  },
-                ),
-              );
-            });
-          } else {
-            Future(() {
-              Navigator.pushNamed(context, '/create_template_page');
-            });
-          }
+          Future(() {
+            Navigator.pushNamed(context, '/create_memo_page');
+          });
         },
         child: const Icon(Icons.add),
       ),

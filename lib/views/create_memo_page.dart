@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:team14/views/memo_form_helper.dart';
+import 'package:team14/models/defaultTemplateProvider.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/memoProvider.dart';
 import 'package:team14/models/memoTemplate.dart';
@@ -8,12 +9,7 @@ import 'package:team14/models/memo.dart';
 import 'package:team14/api/weather.dart';
 
 class CreateMemoPage extends StatefulWidget {
-  final int templateMemoId;
-
-  const CreateMemoPage({
-    Key? key,
-    required this.templateMemoId,
-  }) : super(key: key);
+  const CreateMemoPage({Key? key}) : super(key: key);
 
   @override
   State<CreateMemoPage> createState() => _CreateMemoPageState();
@@ -25,7 +21,18 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
   final defaultMemoTitle = 'Memo';
 
   Future<Map<String, dynamic>> _connectDBProcess() async {
-    MemoTemplate? mt = await mtp.selectMemoTemplate(widget.templateMemoId);
+    final int? templateMemoId =
+        await DefaultTemplateProvider().getDefaultTemplateId();
+
+    if (templateMemoId == null) {
+      // NOTE: デフォルトのテンプレートidが登録されていない場合，
+      // 'create_template_page'に遷移する必要がある.
+      // 'memo_form_helper'のFutureBuilder内のifで，
+      // 空のmapが渡されたときに遷移するような処理を構築している.
+      return {};
+    }
+
+    MemoTemplate? mt = await mtp.selectMemoTemplate(templateMemoId);
     if (mt == null) {
       throw StateError('[${runtimeType.toString()}] Memo template id is null!');
     }

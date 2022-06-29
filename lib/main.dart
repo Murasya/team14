@@ -3,6 +3,7 @@ import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/select_template_page.dart';
 import 'package:team14/views/memo_list_page.dart';
 import 'package:team14/views/create_template_page.dart';
+import 'package:team14/views/create_memo_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,11 +20,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/select_template_page',
+      initialRoute: '/create_memo_page',
       routes: {
         '/select_template_page': (context) => const SelectTemplatePage(),
         '/memo_list_page': (context) => const MemoListPage(),
         '/create_template_page': (context) => const CreateTemplatePage(),
+        '/create_memo_page': (context) => const CreateMemoPage(),
       },
     );
   }
