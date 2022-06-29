@@ -77,6 +77,10 @@ class _SelectTemplatePageState extends State<SelectTemplatePage> {
       setState(() {
         templateList = mtp.selectAll();
       });
+      Fluttertoast.showToast(
+        msg: 'テンプレートを削除しました',
+        gravity: ToastGravity.TOP,
+      );
     }, (e, s) {
       print('[Error] $e');
 
