@@ -138,6 +138,12 @@ class _MemoFormHelperState extends State<MemoFormHelper> {
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.data == null) {
               return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.data!.isEmpty) {
+              // When the default template id is not registered.
+              Future(() {
+                Navigator.pushNamed(context, '/create_template_page');
+              });
+              return const Center(child: CircularProgressIndicator());
             } else {
               _initializeAsyncValues(snapshot.data!);
               return _contentWidget();
