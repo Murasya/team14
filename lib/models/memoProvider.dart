@@ -27,6 +27,7 @@ class MemoProvider {
     final db = await _open();
     final maps = await db.query(
       memoTableName,
+      orderBy: '$memoColumnId DESC',
       where: '$memoColumnMemoTemplateId = ?',
       whereArgs: [templateId],
     );
