@@ -27,10 +27,16 @@ Future shareAsCsv({
   required List<MemoTemplate> memoTemplates,
   required List<Memo> memos,
 }) async {
+  Map<int, MemoTemplate> mts = {};
+  for (var mt in memoTemplates) {
+    mts[mt.id!] = mt;
+  }
+
   final directory = await getTemporaryDirectory();
   final filePath = '${directory.path}/$fileName';
   final file = File(filePath);
-  final fileContents = '${memoColumns.join(',')}\n${memos.join('\n')}';
+  String fileContents = '${memoColumns.join(',')}\n';
+  fileContents += memos.where((memo) => mts.containsKey(memo.memoTemplateId)).join('\n');
 
   await file.writeAsString(fileContents);
   Share.shareFiles([filePath]);
