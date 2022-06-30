@@ -1,5 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:team14/models/memoTemplateProvider.dart';
 import 'package:team14/models/memoProvider.dart';
+import 'package:team14/utility/utility.dart';
+
+Future<void> exportMemoWithinSameTemplate(BuildContext context) async {
+  final memoTemplates = await MemoTemplateProvider().selectAll();
+
+  // Nothing Template
+  if (memoTemplates.isEmpty) {
+    Fluttertoast.showToast(
+      msg: 'テンプレートがありません',
+      gravity: ToastGravity.TOP,
+      timeInSecForIosWeb: 3,
+      toastLength: Toast.LENGTH_LONG,
+    );
+    return;
+  }
+
+  final action = await showDialog(
+    context: context,
+    builder: (_) {
+      final dropdownList = memoTemplates
+          .map((mt) => DropdownMenuItem(value: mt.id, child: Text(mt.name)))
+          .toList();
+      final defaultValue = memoTemplates.first.id!;
+      return SimpleDialog(
+        title: const Text('テンプレートを選択'),
+        children: [
+          DropdownButtonFormField<int>(
+            autofocus: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+            ),
+            items: dropdownList,
+            value: defaultValue,
+            onChanged: (value) {
+              Navigator.pop(context, value);
+            },
+          ),
+        ],
+      );
+    },
+  );
+  if (action != null) {
+    print('id: $action');
+    MemoProvider mp = MemoProvider();
+    final templateId = action;
+    final memos = await mp.selectMemoWithinSameTemplate(templateId);
+    shareAsCsv(memoTemplates: memoTemplates, memos: memos);
+  }
+}
 
 PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
@@ -24,14 +76,27 @@ PreferredSizeWidget myAppBar({required title, required context}) {
                 Icons.download,
                 color: Colors.grey,
               ),
-              Text('CSVを出力'),
+              Text('メモを出力'),
+            ]),
+          ),
+          PopupMenuItem<int>(
+            value: 1,
+            child: Row(children: const <Widget>[
+              Icon(
+                Icons.download,
+                color: Colors.grey,
+              ),
+              Text('テンプレート単位でメモを出力'),
             ]),
           ),
         ];
       }, onSelected: (value) async {
-        MemoProvider mp = MemoProvider();
         if (value == 0) {
-          await mp.shareAsCsvFromDB();
+          final memoTemplates = await MemoTemplateProvider().selectAll();
+          final memos = await MemoProvider().selectAll();
+          shareAsCsv(memoTemplates: memoTemplates, memos: memos);
+        } else if (value == 1) {
+          exportMemoWithinSameTemplate(context);
         }
       }),
     ],
