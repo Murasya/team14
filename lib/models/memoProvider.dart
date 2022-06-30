@@ -27,6 +27,17 @@ class MemoProvider {
     return Memo.fromMap(maps.first);
   }
 
+  Future<List<Memo>> selectMemoWithinSameTemplate(int templateId) async {
+    final db = await _open();
+    final maps = await db.query(
+      memoTableName,
+      where: '$memoColumnMemoTemplateId = ?',
+      whereArgs: [templateId],
+    );
+    if (maps.isEmpty) return [];
+    return maps.map((map) => Memo.fromMap(map)).toList();
+  }
+
   Future<List<Memo>> selectAll() async {
     final db = await _open();
     final maps = await db.query(
