@@ -45,7 +45,6 @@ Future<void> exportMemoWithinSameTemplate(BuildContext context) async {
     },
   );
   if (action != null) {
-    print('id: $action');
     MemoProvider mp = MemoProvider();
     final templateId = action;
     final memos = await mp.selectMemoWithinSameTemplate(templateId);
