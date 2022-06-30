@@ -62,7 +62,7 @@ Widget myDrawer(BuildContext context) {
         ListTile(
           title: const Text('テンプレート一覧'),
           onTap: () {
-            Navigator.pushNamed(context, '/select_template_page');
+            Navigator.pushNamed(context, '/template_list_page');
           },
         ),
       ],
