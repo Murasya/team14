@@ -25,20 +25,34 @@ Future<void> exportMemoWithinSameTemplate(BuildContext context) async {
       final dropdownList = memoTemplates
           .map((mt) => DropdownMenuItem(value: mt.id, child: Text(mt.name)))
           .toList();
-      final defaultValue = memoTemplates.first.id!;
+      int selectedId = memoTemplates.first.id!;
       return SimpleDialog(
         title: const Text('テンプレートを選択'),
         children: [
-          DropdownButtonFormField<int>(
-            autofocus: true,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                DropdownButtonFormField<int>(
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                  ),
+                  items: dropdownList,
+                  value: selectedId,
+                  onChanged: (value) => selectedId = value!,
+                  enableFeedback: true,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                  ),
+                  child: const Text('決定'),
+                  onPressed: () => Navigator.pop(context, selectedId),
+                ),
+              ],
             ),
-            items: dropdownList,
-            value: defaultValue,
-            onChanged: (value) {
-              Navigator.pop(context, value);
-            },
           ),
         ],
       );
