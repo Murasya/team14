@@ -422,7 +422,7 @@ class _NamingTemplateState extends State<NamingTemplate> {
         defaultTemplate ??= insertedId;
         await dtp.setDefaultTemplateId(id: defaultTemplate);
         Future(() {
-          Navigator.pushNamed(context, '/select_template_page');
+          Navigator.pushNamed(context, '/template_list_page');
         });
       }
     }

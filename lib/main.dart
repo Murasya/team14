@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:team14/views/common_widgets.dart';
-import 'package:team14/views/select_template_page.dart';
+import 'package:team14/views/template_list_page.dart';
 import 'package:team14/views/memo_list_page.dart';
 import 'package:team14/views/create_template_page.dart';
 import 'package:team14/views/create_memo_page.dart';
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/create_memo_page',
       routes: {
-        '/select_template_page': (context) => const SelectTemplatePage(),
+        '/template_list_page': (context) => const TemplateListPage(),
         '/memo_list_page': (context) => const MemoListPage(),
         '/create_template_page': (context) => const CreateTemplatePage(),
         '/create_memo_page': (context) => const CreateMemoPage(),
