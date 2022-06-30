@@ -56,7 +56,8 @@ Widget myDrawer(BuildContext context) {
         ListTile(
           title: const Text('メモ一覧'),
           onTap: () {
-            Navigator.pushNamed(context, '/memo_list_page');
+            // Navigator.pushNamed(context, '/memo_list_page');
+            Navigator.pushNamed(context, '/memo_list_navigator');
           },
         ),
         ListTile(

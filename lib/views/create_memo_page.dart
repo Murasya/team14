@@ -96,7 +96,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
 
       await mp.insert(memo);
       Future(() {
-        Navigator.pushNamed(context, '/memo_list_page');
+        // Navigator.pushNamed(context, '/memo_list_page');
+        Navigator.pushNamed(context, '/memo_list_navigator');
       });
     } on Exception catch (e) {
       throw Exception('$e');
