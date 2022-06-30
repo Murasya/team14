@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'dbHelper.dart';
 import 'memo.dart';
 
@@ -27,6 +23,18 @@ class MemoProvider {
     return Memo.fromMap(maps.first);
   }
 
+  Future<List<Memo>> selectMemoWithinSameTemplate(int templateId) async {
+    final db = await _open();
+    final maps = await db.query(
+      memoTableName,
+      orderBy: '$memoColumnId DESC',
+      where: '$memoColumnMemoTemplateId = ?',
+      whereArgs: [templateId],
+    );
+    if (maps.isEmpty) return [];
+    return maps.map((map) => Memo.fromMap(map)).toList();
+  }
+
   Future<List<Memo>> selectAll() async {
     final db = await _open();
     final maps = await db.query(
@@ -47,17 +55,6 @@ class MemoProvider {
     final db = await _open();
     return await db
         .delete(memoTableName, where: '$memoColumnId = ?', whereArgs: [id]);
-  }
-
-  Future shareAsCsvFromDB({String fileName = 'latest_db.csv'}) async {
-    final directory = await getTemporaryDirectory();
-    final filePath = '${directory.path}/$fileName';
-    var file = File(filePath);
-    String fileContents =
-        '$memoColumnId, $memoColumnTitle, $memoColumnWeatherObsDate, $memoColumnRainfallList, $memoColumnGpsLatitude, $memoColumnGpsLongitude, $memoColumnMemoTemplateId, $memoColumnTextBox, $memoColumnMultipleSelectList, $memoColumnSingleSelect, $memoColumnCreatedAt, $memoColumnUpdatedAt\n';
-    await selectAll().then((memos) => fileContents += memos.join('\n'));
-    await file.writeAsString(fileContents);
-    Share.shareFiles([filePath]);
   }
 
   Future close() async {

@@ -78,7 +78,7 @@ class Memo {
 
   @override
   String toString() =>
-      '$id, $title, $weatherObsDate, ${rainfallList.join('/')}, $gpsLatitude, $gpsLongitude, $memoTemplateId, $textBox, ${multipleSelectList?.join('/')}, $singleSelect, $createdAt, $updatedAt';
+      '$id, $title, $weatherObsDate, ${rainfallList.join('/')}, $gpsLatitude, $gpsLongitude, $memoTemplateId, ${textBox?.replaceAll('\n', ' ')}, ${multipleSelectList?.join('/')}, $singleSelect, $createdAt, $updatedAt';
 
   // For Debug
   void dumpAllColumns() => print(this.toString());
