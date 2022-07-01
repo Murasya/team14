@@ -6,7 +6,7 @@ import 'package:team14/views/memo_list_page.dart';
 import 'package:team14/views/create_template_page.dart';
 import 'package:team14/views/create_memo_page.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
   await FlutterConfig.loadEnvVariables();
   runApp(const MyApp());

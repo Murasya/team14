@@ -71,17 +71,6 @@ class _MemoListPageState extends State<MemoListPage> {
     });
   }
 
-  // GoogleMap
-  Widget getGoogleMap() {
-    return GoogleMap(
-      mapType: MapType.normal,
-      myLocationButtonEnabled: false,
-      initialCameraPosition: initialCameraPosition,
-      markers: markers,
-      onMapCreated: controller.complete,
-    );
-  }
-
   void toEditView(int memoId) {
     Future(() {
       Navigator.pop(context);
@@ -168,7 +157,13 @@ class _MemoListPageState extends State<MemoListPage> {
                   Expanded(
                     child: Container(
                       padding: myPadding(),
-                      child: getGoogleMap(),
+                      child: GoogleMap(
+                        mapType: MapType.normal,
+                        myLocationButtonEnabled: false,
+                        initialCameraPosition: initialCameraPosition,
+                        markers: markers,
+                        onMapCreated: controller.complete,
+                      ),
                     ),
                   ),
                   Expanded(
