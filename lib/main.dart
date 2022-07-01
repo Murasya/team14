@@ -5,8 +5,6 @@ import 'package:team14/views/template_list_page.dart';
 import 'package:team14/views/memo_list_page.dart';
 import 'package:team14/views/create_template_page.dart';
 import 'package:team14/views/create_memo_page.dart';
-import 'package:team14/views/memo_list_navigator.dart';
-import 'package:team14/views/memo_list_google_maps_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
@@ -31,8 +29,6 @@ class MyApp extends StatelessWidget {
         '/memo_list_page': (context) => const MemoListPage(),
         '/create_template_page': (context) => const CreateTemplatePage(),
         '/create_memo_page': (context) => const CreateMemoPage(),
-        '/memo_list_navigator': (context) => const MemoListNavigator(),
-        '/memo_list_google_maps_page': (context) => const MemoListGoogleMapsPage(),
       },
     );
   }

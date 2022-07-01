@@ -46,7 +46,7 @@ class _EditMemoPageState extends State<EditMemoPage> {
     memo.updatedAt = DateTime.now();
     await mp.update(memo);
     Future(() {
-      Navigator.pushNamed(context, '/memo_list_google_maps_page');
+      Navigator.pushNamed(context, '/memo_list_page');
     });
   }
 
