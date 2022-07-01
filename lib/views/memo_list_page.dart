@@ -24,11 +24,11 @@ class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Memo>> memoList;
   final MemoProvider mp = MemoProvider();
   late Set<Marker> markers;
-  CameraPosition initialCameraPosition = const CameraPosition(
-    target: LatLng(35.6851793, 139.7506108),
-    zoom: 5,
+  GoogleMapController? mapController;
+  final CameraPosition initialCameraPosition = const CameraPosition(
+    target: LatLng(35.6851793, 139.7506108), // Imperial Palace
+    zoom: 14,
   );
-  Completer<GoogleMapController> controller = Completer();
 
   @override
   void initState() {
@@ -90,11 +90,23 @@ class _MemoListPageState extends State<MemoListPage> {
         onTapContent(memo: memo);
       },
       onLongPress: () {
-        toEditView(memo.id!);
+        mapController?.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: LatLng(
+                memo.gpsLatitude.toDouble(),
+                memo.gpsLongitude.toDouble(),
+              ),
+              zoom: 14),
+        ));
       },
       child: Card(
         child: ListTile(
-          leading: const Icon(Icons.description),
+          leading: IconButton(
+            icon: const Icon(Icons.description),
+            onPressed: () {
+              toEditView(memo.id!);
+            },
+          ),
           title: Text(memo.title),
           trailing: IconButton(
             icon: const Icon(Icons.info_outlined),
@@ -162,7 +174,11 @@ class _MemoListPageState extends State<MemoListPage> {
                         myLocationButtonEnabled: false,
                         initialCameraPosition: initialCameraPosition,
                         markers: markers,
-                        onMapCreated: controller.complete,
+                        onMapCreated: (controller) {
+                          setState(() {
+                            mapController = controller;
+                          });
+                        },
                       ),
                     ),
                   ),
