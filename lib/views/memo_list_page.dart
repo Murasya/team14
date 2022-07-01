@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:team14/views/common_widgets.dart';
 import 'package:team14/views/list_helper.dart';
@@ -18,7 +22,13 @@ class MemoListPage extends StatefulWidget {
 
 class _MemoListPageState extends State<MemoListPage> {
   late Future<List<Memo>> memoList;
-  late MemoProvider mp = MemoProvider();
+  final MemoProvider mp = MemoProvider();
+  late Set<Marker> markers;
+  CameraPosition initialCameraPosition = const CameraPosition(
+    target: LatLng(35.6851793, 139.7506108),
+    zoom: 5,
+  );
+  Completer<GoogleMapController> controller = Completer();
 
   @override
   void initState() {
@@ -26,10 +36,23 @@ class _MemoListPageState extends State<MemoListPage> {
     memoList = mp.selectAll();
   }
 
+  void createMarkers({required List<Memo> memoList}) {
+    markers = memoList
+        .map((memo) => Marker(
+              markerId: MarkerId(memo.id!.toString()),
+              position: LatLng(
+                memo.gpsLatitude.toDouble(),
+                memo.gpsLongitude.toDouble(),
+              ),
+            ))
+        .toSet();
+  }
+
   Future<void> onTapContent({required Memo memo}) async {
     MemoTemplateProvider mtp = MemoTemplateProvider();
     MemoTemplate mt = (await mtp.selectMemoTemplate(memo.memoTemplateId))!;
     Future(() {
+      Navigator.pop(context);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
@@ -48,6 +71,59 @@ class _MemoListPageState extends State<MemoListPage> {
     });
   }
 
+  void toEditView(int memoId) {
+    Future(() {
+      Navigator.pop(context);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return EditMemoPage(id: memoId);
+          },
+        ),
+      );
+    });
+  }
+
+  Widget memoCardWithGesture(Memo memo) {
+    return GestureDetector(
+      onTap: () {
+        onTapContent(memo: memo);
+      },
+      onLongPress: () {
+        toEditView(memo.id!);
+      },
+      child: Card(
+        child: ListTile(
+          leading: const Icon(Icons.description),
+          title: Text(memo.title),
+          trailing: IconButton(
+            icon: const Icon(Icons.info_outlined),
+            onPressed: () async {
+              final action = await showDialog(
+                context: context,
+                builder: (_) {
+                  return const ActionDialog(
+                    uniqueAction: '編集',
+                  );
+                },
+              );
+              if (action != null) {
+                if (action == '削除') {
+                  // 削除対象が登録済みでなければ削除OK
+                  deleteMemo(memo.id!);
+                } else if (action == '編集') {
+                  toEditView(memo.id!);
+                }
+              } else {
+                print('not touched delete!');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +132,7 @@ class _MemoListPageState extends State<MemoListPage> {
         onPressed: () async {
           // メモ作成画面に遷移
           Future(() {
+            Navigator.pop(context);
             Navigator.pushNamed(context, '/create_memo_page');
           });
         },
@@ -63,81 +140,49 @@ class _MemoListPageState extends State<MemoListPage> {
       ),
       body: Container(
         padding: myPadding(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: FutureBuilder(
-                future: memoList,
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<List<Memo>> snapshot,
-                ) {
-                  if (snapshot.hasData == false) {
-                    return const Center(
-                      child: Text('メモがありません'),
-                    );
-                  } else {
-                    // DBにデータがある場合
-                    if (snapshot.data!.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            child: ListTile(
-                              onTap: () {
-                                onTapContent(
-                                    memo: snapshot.data!.elementAt(index));
-                              },
-                              leading: const Icon(Icons.description),
-                              title: Text(snapshot.data![index].title),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.info_outlined),
-                                onPressed: () async {
-                                  // アクションポップアップ
-                                  final action = await showDialog(
-                                    context: context,
-                                    builder: (_) {
-                                      return const ActionDialog(
-                                        uniqueAction: '編集',
-                                      );
-                                    },
-                                  );
-                                  if (action != null) {
-                                    // is削除
-                                    if (action == '削除') {
-                                      deleteMemo(snapshot.data![index].id!);
-                                    } else if (action == '編集') {
-                                      // is編集
-                                      if (!mounted) return;
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return EditMemoPage(
-                                                id: snapshot.data![index].id!);
-                                          },
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    print('not touched delete!');
-                                  }
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: Text('メモがまだ作成されていません'),
-                      );
-                    }
-                  }
-                },
-              ),
-            ),
-          ],
+        child: FutureBuilder(
+          future: memoList,
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<List<Memo>> snapshot,
+          ) {
+            if (snapshot.hasData == false) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.data!.isNotEmpty) {
+              // Found Template.
+              createMarkers(memoList: snapshot.data!);
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: myPadding(),
+                      child: GoogleMap(
+                        mapType: MapType.normal,
+                        myLocationButtonEnabled: false,
+                        initialCameraPosition: initialCameraPosition,
+                        markers: markers,
+                        onMapCreated: controller.complete,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        for (Memo memo in snapshot.data!)
+                          memoCardWithGesture(memo),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Nothing Template.
+              return const Center(
+                child: Text('メモテンプレートがまだ作成されていません'),
+              );
+            }
+          },
         ),
       ),
       drawer: myDrawer(context),

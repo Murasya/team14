@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:team14/views/memo_form_helper.dart';
 import 'package:team14/models/defaultTemplateProvider.dart';
 import 'package:team14/models/memoTemplateProvider.dart';
@@ -67,10 +68,11 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     // The textBox, multipleSelectList, and singleSelect
     // have already been updated in the previous process.
     try {
-      // TODO: get current location
-      // This is dummy location
-      const latitude = 32.789997;
-      const longitude = 131.689920;
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      final latitude = position.latitude;
+      final longitude = position.longitude;
+      print('$longitude,$latitude');
 
       // get API info
       await dotenv.load(fileName: '.env');
