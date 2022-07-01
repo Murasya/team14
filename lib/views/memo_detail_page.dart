@@ -46,7 +46,7 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
     // 初期表示座標のMarkerを設定
     final initialMarkers = {
       Marker(
-        markerId: MarkerId(initialPosition.timestamp.toString()),
+        markerId: MarkerId(widget.memo.id!.toString()),
         position: LatLng(initialPosition.latitude, initialPosition.longitude),
       ),
     };
