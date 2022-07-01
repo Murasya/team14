@@ -12,7 +12,7 @@ class MemoListNavigator extends StatefulWidget {
 
 class _MemoListNavigatorState extends State<MemoListNavigator> {
   // ナビゲータ用ボタン
-  var pages = <Widget>[const MemoListPage(), const MemoListGoogleMapsPage()];
+  final pages = <Widget>[const MemoListPage(), const MemoListGoogleMapsPage()];
 
   // 選択インデックス
   var selectedIndex = 0;

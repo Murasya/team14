@@ -70,8 +70,8 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      var latitude = position.latitude;
-      var longitude = position.longitude;
+      final latitude = position.latitude;
+      final longitude = position.longitude;
       print('$longitude,$latitude');
 
       // get API info
@@ -96,8 +96,7 @@ class _CreateMemoPageState extends State<CreateMemoPage> {
 
       await mp.insert(memo);
       Future(() {
-        // Navigator.pushNamed(context, '/memo_list_page');
-        Navigator.pushNamed(context, '/memo_list_navigator');
+        Navigator.pushNamed(context, '/memo_list_google_maps_page');
       });
     } on Exception catch (e) {
       throw Exception('$e');

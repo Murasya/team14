@@ -22,11 +22,11 @@ class MemoListGoogleMapsPage extends StatefulWidget {
 
 class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
   late Future<List<Memo>> memoList;
-  late MemoProvider mp = MemoProvider();
+  final MemoProvider mp = MemoProvider();
   late Set<Marker> markers;
   CameraPosition initialCameraPosition = const CameraPosition(
     target: LatLng(35.6851793, 139.7506108),
-    zoom: 0,
+    zoom: 5,
   );
   Completer<GoogleMapController> controller = Completer();
 
@@ -37,7 +37,7 @@ class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
   }
 
   // マーカーの作成
-  void getInitialMarkers({required List<Memo> memoList}) {
+  void createMarkers({required List<Memo> memoList}) {
     markers = {};
     for (var memo in memoList) {
       var _marker = Marker(
@@ -48,17 +48,10 @@ class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
       markers.add(_marker);
     }
   }
-  void getMarkers({required List<Memo> memoList}) {
+
+  void updateMarkers({required List<Memo> memoList}) {
     setState(() {
-      markers = {};
-      for (var memo in memoList) {
-        var _marker = Marker(
-          markerId: MarkerId(memo.updatedAt.toString()),
-          position:
-              LatLng(memo.gpsLatitude.toDouble(), memo.gpsLongitude.toDouble()),
-        );
-        markers.add(_marker);
-      }
+      createMarkers(memoList: memoList);
     });
   }
 
@@ -123,7 +116,7 @@ class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
                   // is削除
                   if (action == '削除') {
                     deleteMemo(snapshot.data![index].id!);
-                    getMarkers(memoList: snapshot.data!);
+                    updateMarkers(memoList: snapshot.data!);
                   } else if (action == '編集') {
                     // is編集
                     if (!mounted) return;
@@ -154,6 +147,7 @@ class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
         onPressed: () async {
           // メモ作成画面に遷移
           Future(() {
+            Navigator.pop(context);
             Navigator.pushNamed(context, '/create_memo_page');
           });
         },
@@ -168,23 +162,26 @@ class _MemoListGoogleMapsPageState extends State<MemoListGoogleMapsPage> {
             AsyncSnapshot<List<Memo>> snapshot,
           ) {
             if (snapshot.hasData == false) {
-              return const Center(
-                child: Text('メモがありません'),
-              );
+              return const Center(child: CircularProgressIndicator());
+
             } else {
               // DBにデータがある場合
               if (snapshot.data!.isNotEmpty) {
-                getInitialMarkers(memoList: snapshot.data!);
+                createMarkers(memoList: snapshot.data!);
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: getGoogleMap()),
+                    Expanded(
+                        child: Container(
+                      padding: myPadding(),
+                      child: getGoogleMap(),
+                    )),
                     Expanded(child: getMemoListViewer(snapshot)),
                   ],
                 );
               } else {
                 return const Center(
-                  child: Text('メモがまだ作成されていません'),
+                  child: Text('メモがありません'),
                 );
               }
             }
