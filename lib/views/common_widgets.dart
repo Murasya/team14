@@ -69,7 +69,7 @@ Future<void> exportMemoWithinSameTemplate(BuildContext context) async {
 PreferredSizeWidget myAppBar({required title, required context}) {
   return AppBar(
     automaticallyImplyLeading: false,
-    flexibleSpace: Text(
+    title: Text(
       title,
       style: const TextStyle(fontSize: 30.0, color: Colors.white),
     ),
